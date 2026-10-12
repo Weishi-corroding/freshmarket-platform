@@ -130,9 +130,9 @@ test('delivery time options mark only the selected slot with a check icon',async
   await expect(page.getByRole('button',{name:'购物车 1 件',exact:true})).toBeVisible();
   await page.goto('/checkout');
   await expect(page.locator('.delivery-slots label.selected')).toHaveCount(1);
-  await expect(page.locator('.delivery-slots label.selected .slot-check')).toBeVisible();
+  await expect(page.locator('.delivery-slots label.selected .slot-box svg')).toBeVisible();
   await page.locator('.delivery-slots label').filter({hasText:'明日 09:00–12:00'}).click();
   await expect(page.locator('.delivery-slots label.selected')).toContainText('明日 09:00–12:00');
-  await expect(page.locator('.delivery-slots label.selected .slot-check')).toBeVisible();
-  await expect(page.locator('.delivery-slots label:not(.selected) .slot-check')).toHaveCount(0);
+  await expect(page.locator('.delivery-slots label.selected .slot-box svg')).toBeVisible();
+  await expect(page.locator('.delivery-slots label:not(.selected) .slot-box svg')).toHaveCount(0);
 });
