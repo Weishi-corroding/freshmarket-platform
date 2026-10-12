@@ -1,0 +1,18 @@
+groups:
+  - name: freshmarket
+    rules:
+      - alert: FreshmarketApiDown
+        expr: up{job="freshmarket-api"} == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "FreshMarket API is down"}
+      - alert: FreshmarketHighErrorRate
+        expr: sum(rate(fresh_http_requests_total{status=~"5.."}[5m])) / clamp_min(sum(rate(fresh_http_requests_total[5m])), 0.01) > 0.01
+        for: 3m
+        labels: {severity: warning}
+        annotations: {summary: "API 5xx ratio exceeds 1%"}
+      - alert: FreshmarketSlowRequests
+        expr: histogram_quantile(0.95, sum(rate(fresh_http_duration_seconds_bucket[5m])) by (le)) > 0.5
+        for: 3m
+        labels: {severity: warning}
+        annotations: {summary: "API p95 exceeds 500 ms"}

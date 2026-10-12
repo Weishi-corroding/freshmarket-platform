@@ -1,0 +1,9 @@
+{
+  "httpStatus": 403,
+  "response": {
+    "code": "FORBIDDEN",
+    "message": "当前账号无权执行此操作",
+    "data": null,
+    "traceId": "1800b799-67cb-41ae-bf0a-fc4d17f63959"
+  }
+}

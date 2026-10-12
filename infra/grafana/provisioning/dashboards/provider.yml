@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: FreshMarket
+    folder: FreshMarket
+    type: file
+    options: {path: /var/lib/grafana/dashboards}

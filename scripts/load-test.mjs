@@ -1,0 +1,11 @@
+import {writeFileSync,mkdirSync} from 'node:fs';
+import {performance} from 'node:perf_hooks';
+const origin=process.env.LOAD_BASE_URL || 'http://127.0.0.1:3001',concurrency=Number(process.env.LOAD_CONCURRENCY || 10),requests=Number(process.env.LOAD_REQUESTS || 200);
+if(!Number.isInteger(concurrency)||concurrency<1||!Number.isInteger(requests)||requests<1)throw new Error('Positive integer concurrency and requests required');
+const durations=[],statuses={};let sent=0,errors=0;
+const start=performance.now();
+await Promise.all(Array.from({length:Math.min(concurrency,requests)},async()=>{while(sent<requests){const index=sent++;const t=performance.now();try{const r=await fetch(origin+'/api/products?pageSize=12&sort=default',{signal:AbortSignal.timeout(10000)});await r.arrayBuffer();statuses[r.status]=(statuses[r.status]||0)+1;if(!r.ok)errors++;}catch{errors++;statuses.network=(statuses.network||0)+1;}durations.push(performance.now()-t);}}));
+const seconds=(performance.now()-start)/1000;durations.sort((a,b)=>a-b);const percentile=p=>Math.round(durations[Math.min(durations.length-1,Math.floor(durations.length*p))]*100)/100;
+const report={timestamp:new Date().toISOString(),scope:'Local catalog HTTP endpoint, single process, SQLite, no Redis; indicative only, not production capacity',node:process.version,platform:process.platform,origin,concurrency,requests,seconds,qps:Math.round(requests/seconds*100)/100,meanMs:Math.round(durations.reduce((s,x)=>s+x,0)/durations.length*100)/100,p50Ms:percentile(.5),p95Ms:percentile(.95),p99Ms:percentile(.99),errors,errorRate:errors/requests,statuses};
+mkdirSync('docs/evidence',{recursive:true});writeFileSync('docs/evidence/load-test.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+if(errors)process.exitCode=1;

@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-10-06T13:06:06.543Z",
+  "database": "postgres",
+  "cache": "redis",
+  "broker": "rabbitmq",
+  "passed": 8,
+  "checks": [
+    "Redis connection and authenticated RabbitMQ connection",
+    "Catalog cache persisted in Redis with TTL",
+    "Shared Redis version invalidation returns updated inventory",
+    "PostgreSQL transactional checkout",
+    "RabbitMQ publisher confirms mark Outbox sent",
+    "RabbitMQ consumer commits notification before ack",
+    "Repeated RabbitMQ event produces one notification",
+    "Cancellation stock reversal plus durable queue delivery"
+  ],
+  "isolatedSchema": true
+}

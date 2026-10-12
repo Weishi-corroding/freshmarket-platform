@@ -1,0 +1,53 @@
+{
+  "documents": [
+    {
+      "file": "鲜境_AI过程与决策记录.docx",
+      "bytes": 42643,
+      "pdfPages": 6,
+      "tables": 2,
+      "images": 0
+    },
+    {
+      "file": "鲜境_实验报告.docx",
+      "bytes": 2180326,
+      "pdfPages": 8,
+      "tables": 2,
+      "images": 5
+    },
+    {
+      "file": "鲜境_测试报告.docx",
+      "bytes": 3641460,
+      "pdfPages": 15,
+      "tables": 4,
+      "images": 10
+    },
+    {
+      "file": "鲜境_设计文档.docx",
+      "bytes": 228941,
+      "pdfPages": 7,
+      "tables": 2,
+      "images": 2
+    },
+    {
+      "file": "鲜境_部署运维手册.docx",
+      "bytes": 41100,
+      "pdfPages": 4,
+      "tables": 1,
+      "images": 0
+    },
+    {
+      "file": "鲜境_需求文档.docx",
+      "bytes": 428104,
+      "pdfPages": 10,
+      "tables": 5,
+      "images": 4
+    }
+  ],
+  "presentation": {
+    "file": "鲜境_项目汇报.pptx",
+    "slides": 13,
+    "outsideCanvas": [],
+    "actualOfficeExport": true
+  },
+  "validation": "OOXML integrity, real Office PDF page counts, PowerPoint text bounds and render previews"
+}

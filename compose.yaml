@@ -1,0 +1,71 @@
+name: freshmarket
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: freshmarket
+      POSTGRES_USER: freshmarket
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run scripts/init-env.ps1 or scripts/init-env.sh first}
+      TZ: Asia/Shanghai
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U freshmarket -d freshmarket"], interval: 5s, timeout: 3s, retries: 20}
+    restart: unless-stopped
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes: ["redis-data:/data"]
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 5s, timeout: 3s, retries: 20}
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:4.3.6-management-alpine
+    environment: {RABBITMQ_DEFAULT_USER: freshmarket, RABBITMQ_DEFAULT_PASS: "${MQ_PASSWORD:?Initialize environment first}"}
+    volumes: ["rabbit-data:/var/lib/rabbitmq"]
+    ports: ["127.0.0.1:15672:15672"]
+    healthcheck: {test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"], interval: 10s, timeout: 5s, retries: 20}
+    restart: unless-stopped
+  api:
+    build: {context: ., dockerfile: infra/api.Dockerfile}
+    image: freshmarket-api:${APP_VERSION:-local}
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:?Initialize environment first}
+      DATABASE_URL: postgres://freshmarket:${DB_PASSWORD}@postgres:5432/freshmarket
+      REDIS_URL: redis://redis:6379
+      AMQP_URL: amqp://freshmarket:${MQ_PASSWORD}@rabbitmq:5672
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8080}
+      SEED_DEMO: "true"
+      DEMO_PASSWORD: ${DEMO_PASSWORD:?Initialize environment first}
+      TZ: Asia/Shanghai
+    depends_on: {postgres: {condition: service_healthy}, redis: {condition: service_healthy}, rabbitmq: {condition: service_healthy}}
+    healthcheck: {test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"], interval: 10s, timeout: 5s, retries: 10}
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+      args: {VITE_DEMO: "true", VITE_DEMO_PASSWORD: "${DEMO_PASSWORD}"}
+    image: freshmarket-web:${APP_VERSION:-local}
+    ports: ["${WEB_BIND:-127.0.0.1}:8080:80"]
+    depends_on: {api: {condition: service_healthy}}
+    healthcheck: {test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"], interval: 10s, timeout: 3s, retries: 10}
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:v3.13.4
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.retention.time=7d"]
+    volumes: ["./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro", "./infra/alerts.yml:/etc/prometheus/alerts.yml:ro", "prometheus-data:/prometheus"]
+    ports: ["127.0.0.1:9090:9090"]
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:13.2.3
+    environment: {GF_SECURITY_ADMIN_USER: admin, GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_PASSWORD:?Initialize environment first}", GF_USERS_ALLOW_SIGN_UP: "false"}
+    volumes: ["./infra/grafana/provisioning:/etc/grafana/provisioning:ro", "./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro", "grafana-data:/var/lib/grafana"]
+    ports: ["127.0.0.1:3000:3000"]
+    restart: unless-stopped
+volumes:
+  postgres-data:
+  redis-data:
+  rabbit-data:
+  prometheus-data:
+  grafana-data:

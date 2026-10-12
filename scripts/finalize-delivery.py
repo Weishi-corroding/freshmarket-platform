@@ -1,0 +1,55 @@
+from pathlib import Path
+import json,hashlib,datetime
+ROOT=Path(__file__).resolve().parents[1];out=ROOT/'deliverables'
+video=json.loads((ROOT/'docs/evidence/video-validation.json').read_text('utf-8'))
+assert video['lessThan15Minutes'] and video['decodedFrames']==3
+docs=json.loads((ROOT/'docs/evidence/documents-validation.json').read_text('utf-8'))
+assert len(docs['documents'])==6 and docs['presentation']['slides']==13
+minutes=int(video['mediaDurationSeconds']//60);seconds=int(video['mediaDurationSeconds']%60)
+guide=f'''# 鲜境 FreshMarket 交付清单
+
+依据《实验四》及教材第九章完成。系统已在本机实际启动，独立品牌参考盒马生鲜购物体验。
+
+## 立即体验
+
+- 完整Docker商城与工作台：http://localhost:8080
+- 登录弹窗选择会员、运营、仓库、客服、财务或管理员，可自动填入演示账号。
+- 本地开发预览：http://localhost:5173；本地默认密码Fresh@123456。
+- Grafana：http://localhost:3000；账号admin，密码取工作区私有.env.docker的GRAFANA_PASSWORD。
+- Swagger：http://localhost:8080/api/docs/
+
+## 提交材料
+
+| 文件 | 用途 |
+| --- | --- |
+| 鲜境_需求文档.docx | 用户画像、权限、用例、流程、领域模型、ER、API、可验证指标 |
+| 鲜境_设计文档.docx | 选型、分层、一致性、Outbox、安全及可靠性 |
+| 鲜境_测试报告.docx | 双数据库、E2E、实物组件、覆盖率和短时测量 |
+| 鲜境_实验报告.docx | 按实验四结构整理的可编辑报告 |
+| 鲜境_部署运维手册.docx | 启动、配置、备份、恢复、回滚和监控 |
+| 鲜境_AI过程与决策记录.docx | 实际Prompt、阶段记录、修正过程和ADR |
+| 鲜境_项目汇报.pptx | 13页汇报，含演讲备注和真实截图 |
+| 鲜境_系统演示.webm | 实际浏览器录屏，{minutes}分{seconds}秒，中文字幕讲解，无语音 |
+| 同名PDF副本 | 本机Office实际渲染，可直接阅读 |
+| FreshMarket-source-and-deliverables.zip | 源码、SQL、部署脚本、文档、PPT、视频和测试原始证据 |
+| SHA256SUMS.json | 压缩包完整性校验 |
+
+Word姓名、学号、专业、团队分工和手写签名留空，由提交人据实补填。视频可用Edge、Chrome或VLC播放；提交人可依据docs/demo-script.md重录真人讲解。
+
+## 已验证结果
+
+SQLite与PostgreSQL各28/28；本地和Docker浏览器E2E各5/5；真实Redis/RabbitMQ检查8/8；类型与生产构建通过；依赖审计0项已知告警。6份Word和13页PPT已实际导出PDF，视频已读取媒体时长并解码3帧验证。
+
+## 复现与实现范围
+
+解压后先阅读README.md。Node.js 24+执行npm ci、npm run dev即可本地体验；完整组件使用scripts/init-env.ps1或init-env.sh生成私有配置，然后docker compose --env-file .env.docker up -d --build。
+
+支付和配送是实验沙箱；未接入真实资金及骑手。未声明生产SLA、远端GitHub CI执行或灾备恢复演练。源包不含密钥、依赖目录、运行数据库和教材原始扫描材料。
+'''
+(out/'交付清单.md').write_text(guide,'utf-8')
+files=[]
+for file in sorted(out.iterdir()):
+    if file.is_file() and file.suffix not in {'.zip'} and file.name not in {'SHA256SUMS.json','artifacts-manifest.json'}:
+        files.append({'file':file.name,'bytes':file.stat().st_size,'sha256':hashlib.sha256(file.read_bytes()).hexdigest()})
+(out/'artifacts-manifest.json').write_text(json.dumps({'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'artifacts':files},ensure_ascii=False,indent=2),'utf-8')
+print('Finalized delivery index and checksums for',len(files),'artifacts.')

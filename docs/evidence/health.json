@@ -1,0 +1,12 @@
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "status": "ok",
+    "database": "postgres",
+    "cache": "connected",
+    "queue": "connected",
+    "time": "2026-10-06T08:09:29.262Z"
+  },
+  "traceId": "8c233b2e-5a62-4200-82d8-9bb327590129"
+}

@@ -1,0 +1,10 @@
+{
+  "archive": "FreshMarket-source-and-deliverables.zip",
+  "files": 173,
+  "bytes": 36489508,
+  "sha256Matches": true,
+  "zipIntegrity": true,
+  "allRequiredMaterials": true,
+  "privateEnvironmentValuesAbsent": true,
+  "dependencyAndRuntimeDirectoriesAbsent": true
+}

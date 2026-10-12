@@ -1,0 +1,152 @@
+[
+  {
+    "name": "apple",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Pink_lady_and_cross_section.jpg/960px-Pink_lady_and_cross_section.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Pink_lady_and_cross_section.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "avocado",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Persea_americana_fruit_2.JPG/960px-Persea_americana_fruit_2.JPG",
+    "source": "https://commons.wikimedia.org/wiki/File:Persea_americana_fruit_2.JPG",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "banana",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Bananavarieties.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "blueberry",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/15/Blueberries.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Blueberries.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "broccoli",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Broccoli_and_cross_section_edit.jpg/960px-Broccoli_and_cross_section_edit.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Broccoli_and_cross_section_edit.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "carrot",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Vegetable-Carrot-Bundle-wStalks.jpg/960px-Vegetable-Carrot-Bundle-wStalks.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Vegetable-Carrot-Bundle-wStalks.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "cherry",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Cherry_season_%2848216568227%29.jpg/960px-Cherry_season_%2848216568227%29.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Cherry_season_(48216568227).jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "croissant",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Croissant-Petr_Kratochvil.jpg/960px-Croissant-Petr_Kratochvil.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Croissant-Petr_Kratochvil.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "cucumber",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/ARS_cucumber.jpg/960px-ARS_cucumber.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ARS_cucumber.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "milk",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Glass_of_Milk_%2833657535532%29.jpg/960px-Glass_of_Milk_%2833657535532%29.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Glass_of_Milk_(33657535532).jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "pasta",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg/960px-%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:(Pasta)_by_David_Adam_Kess_(pic.2).jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "pineapple",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg/960px-%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:കൈതച്ചക്ക.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "pork",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Schweinebauch-2.jpg/960px-Schweinebauch-2.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Schweinebauch-2.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "salad",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Salad_platter.jpg/960px-Salad_platter.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Salad_platter.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "steak",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Steak_with_shitaki_mushrooms.jpg/960px-Steak_with_shitaki_mushrooms.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Steak_with_shitaki_mushrooms.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "tomato",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/960px-Tomato_je.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Tomato_je.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "dumplings",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Pork_Steamed_Wontons.jpg/960px-Pork_Steamed_Wontons.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Pork_Steamed_Wontons.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "yogurt",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Joghurt.jpg/960px-Joghurt.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Joghurt.jpg",
+    "license": "See file-specific Wikimedia Commons author/license metadata; retained in sources.json."
+  },
+  {
+    "name": "shrimp",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Litopenaeus_vannamei_specimen.jpg/960px-Litopenaeus_vannamei_specimen.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Litopenaeus_vannamei_specimen.jpg",
+    "license": "See Wikimedia file page."
+  },
+  {
+    "name": "hero",
+    "url": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=900&q=85&fm=jpg",
+    "source": "https://unsplash.com/photos/strawberry-lot-FCrgmqqvl-w",
+    "license": "Unsplash License https://unsplash.com/license"
+  },
+  {
+    "name": "strawberry",
+    "url": "https://images.unsplash.com/photo-1685130050521-821d122f4915?auto=format&fit=crop&w=900&q=85&fm=jpg",
+    "source": "https://unsplash.com/photos/a-close-up-of-a-bunch-of-strawberries-_NMPU2fZfz4",
+    "license": "Unsplash License https://unsplash.com/license"
+  },
+  {
+    "name": "salmon",
+    "url": "https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?auto=format&fit=crop&w=900&q=85&fm=jpg",
+    "source": "https://unsplash.com/s/photos/salmon-fillet",
+    "license": "Unsplash License https://unsplash.com/license"
+  },
+  {
+    "name": "eggs",
+    "url": "https://images.unsplash.com/photo-1552418322-3855ef830d11?auto=format&fit=crop&w=900&q=85&fm=jpg",
+    "source": "https://unsplash.com/photos/six-eggs-on-tray-DCOiZhT-WkI",
+    "license": "Unsplash License https://unsplash.com/license"
+  },
+  {
+    "name": "chicken",
+    "url": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=900&q=85&fm=jpg",
+    "source": "https://unsplash.com/s/photos/chicken-meat",
+    "license": "Unsplash License https://unsplash.com/license"
+  },
+  {
+    "name": "fish",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Lates_calcarifer%2C_2014-09-19a.jpg/960px-Lates_calcarifer%2C_2014-09-19a.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Lates_calcarifer,_2014-09-19a.jpg",
+    "license": "See Wikimedia file page."
+  }
+]

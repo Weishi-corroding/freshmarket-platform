@@ -1,0 +1,31 @@
+import {chromium} from '@playwright/test';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+const root='http://127.0.0.1:8080';
+const textFile=p=>{const b=readFileSync(p);return (b[0]===255&&b[1]===254?b.subarray(2).toString('utf16le'):b.toString('utf8')).replace(/^\uFEFF/,'');};
+const env=Object.fromEntries(textFile('.env.docker').split(/\r?\n/).filter(l=>l.includes('=')).map(l=>[l.slice(0,l.indexOf('=')),l.slice(l.indexOf('=')+1)]));
+mkdirSync('docs/screenshots',{recursive:true});mkdirSync('docs/evidence',{recursive:true});
+const browser=await chromium.launch({channel:process.platform==='win32'?'msedge':undefined});
+const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage();
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+try{
+ const health=await (await fetch(root+'/api/health')).json();if(health.data.database!=='postgres'||health.data.queue!=='connected'||health.data.cache!=='connected')throw new Error('Full infrastructure not connected');
+ writeFileSync('docs/evidence/health.json',JSON.stringify(health,null,2));
+ const target=await (await fetch('http://127.0.0.1:9090/api/v1/query?query=up%7Bjob%3D%22freshmarket-api%22%7D')).json();
+ if(target.data.result[0]?.value[1]!=='1')throw new Error('Prometheus target is not UP');writeFileSync('docs/evidence/prometheus-target.json',JSON.stringify(target,null,2));
+ const services=textFile('docs/evidence/docker-services.json').trim().split(/\r?\n/).map(JSON.parse);
+ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+ await page.route('**/__environment',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>FreshMarket 环境证据</title><style>body{font-family:'Microsoft YaHei',sans-serif;background:#f2f7f7;margin:0;color:#25424a}.wrap{padding:48px 65px}h1{font-size:34px;margin:12px 0}p{color:#718a90}header{background:#0d5864;color:white;padding:35px 65px}table{width:100%;border-collapse:collapse;background:white;font-size:16px}th,td{text-align:left;padding:18px;border-bottom:1px solid #e3ecec}th{background:#e4f1ed;color:#286d62}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px}.card{background:white;padding:24px;border-radius:10px}.card b{display:block;font-size:24px;margin:14px 0}.note{font-size:14px}footer{margin-top:25px;color:#7b959d}</style><header>鲜境 FreshMarket · 实际运行环境<h1>七个容器，真实连接的业务链路。</h1></header><div class="wrap"><div class="grid"><div class="card">数据库<b>PostgreSQL</b>事务与28项隔离测试</div><div class="card">缓存 / 消息<b>Redis + RabbitMQ</b>8项实物组件检查通过</div><div class="card">监控采集<b>Prometheus UP = 1</b>实际指标查询结果</div></div><table><tr><th>服务</th><th>镜像</th><th>运行状态</th><th>健康</th></tr>${services.map(s=>`<tr><td>${esc(s.Service)}</td><td>${esc(s.Image)}</td><td>${esc(s.State)}</td><td>${esc(s.Health || '运行中')}</td></tr>`).join('')}</table><footer>${esc(health.data.time)} · Node.js 24 / React 19 / Fastify 5 / TypeScript 5.9 · 原始证据位于 docs/evidence</footer></div></html>`}));
+ await page.goto(root+'/__environment');await page.screenshot({path:'docs/screenshots/07-runtime-stack.png',fullPage:true});
+ await page.goto('http://127.0.0.1:3000/login');await page.locator('input[name="user"]').fill('admin');await page.locator('input[name="password"]').fill(env.GRAFANA_PASSWORD);await page.locator('button[type="submit"]').click();
+ await page.waitForURL(url=>!url.pathname.endsWith('/login'),{timeout:30000});
+ await page.goto('http://127.0.0.1:3000/d/freshmarket?orgId=1&from=now-30m&to=now&timezone=browser');
+ await page.getByText('API健康',{exact:true}).waitFor({timeout:30000});await page.waitForTimeout(3000);await page.screenshot({path:'docs/screenshots/08-grafana-monitor.png',fullPage:true});
+ await page.goto(root+'/api/docs/');await page.getByRole('heading',{name:/鲜境 FreshMarket API/}).waitFor({timeout:20000});await page.screenshot({path:'docs/screenshots/09-openapi.png',fullPage:true});
+ const login=await(await fetch(root+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'warehouse',password:env.DEMO_PASSWORD})})).json();
+ const denied=await fetch(root+'/api/admin/users',{headers:{Authorization:'Bearer '+login.data.token}});const denial=await denied.json();if(denied.status!==403)throw new Error('RBAC did not reject');
+ writeFileSync('docs/evidence/rbac-denial.json',JSON.stringify({httpStatus:denied.status,response:denial},null,2));
+ await page.route('**/__permission-evidence',route=>route.fulfill({contentType:'text/html',body:`<html lang="zh-CN"><meta charset="utf-8"><style>body{font-family:'Microsoft YaHei',sans-serif;padding:65px;background:#f3f7f8;color:#244752}h1{font-size:40px}strong{color:#ba664c;font-size:72px}pre{background:white;border:1px solid #deeaed;border-radius:12px;padding:30px;font-size:24px;line-height:1.8}p{font-size:21px;color:#7a9298}</style><h1>服务端 RBAC 越权拦截</h1><p>实际请求：warehouse → GET /api/admin/users</p><strong>HTTP 403</strong><pre>${esc(JSON.stringify(denial,null,2))}</pre><p>角色来自数据库；前端隐藏菜单之外，接口仍拒绝未授权请求。</p></html>`}));
+ await page.goto(root+'/__permission-evidence');await page.screenshot({path:'docs/screenshots/10-rbac-denied.png',fullPage:true});
+ writeFileSync('docs/evidence/browser-runtime.json',JSON.stringify({timestamp:new Date().toISOString(),browser:browser.version(),fullDockerUrl:root,errors},null,2));
+ console.log('Captured runtime, Grafana, OpenAPI and real RBAC evidence. Browser errors:',errors.length);
+}finally{await context.close();await browser.close();}

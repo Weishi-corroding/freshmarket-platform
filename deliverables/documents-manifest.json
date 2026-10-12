@@ -1,0 +1,14 @@
+{
+  "wordDocuments": [
+    "鲜境_需求文档.docx",
+    "鲜境_设计文档.docx",
+    "鲜境_测试报告.docx",
+    "鲜境_实验报告.docx",
+    "鲜境_部署运维手册.docx",
+    "鲜境_AI过程与决策记录.docx"
+  ],
+  "presentation": "鲜境_项目汇报.pptx",
+  "slides": 13,
+  "generatedFrom": "docs/*.md, docs/evidence/summary.json, actual screenshots",
+  "date": "2026-10-06"
+}

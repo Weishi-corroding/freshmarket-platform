@@ -1,0 +1,8 @@
+services:
+  tests:
+    profiles: [test]
+    build: {context: ., dockerfile: infra/test.Dockerfile}
+    environment:
+      NODE_ENV: test
+      TEST_DATABASE_URL: postgres://freshmarket:${DB_PASSWORD}@postgres:5432/freshmarket
+    depends_on: {postgres: {condition: service_healthy}}
