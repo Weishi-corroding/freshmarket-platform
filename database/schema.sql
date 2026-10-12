@@ -43,6 +43,10 @@ CREATE TABLE IF NOT EXISTS refunds (
  reason TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', amount INTEGER NOT NULL,
  original_status TEXT NOT NULL, decision_note TEXT NOT NULL DEFAULT '', created_at BIGINT NOT NULL, updated_at BIGINT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS refund_items (
+ id TEXT PRIMARY KEY, refund_id TEXT NOT NULL REFERENCES refunds(id), product_id TEXT NOT NULL REFERENCES products(id),
+ quantity INTEGER NOT NULL CHECK(quantity > 0), UNIQUE(refund_id,product_id)
+);
 CREATE TABLE IF NOT EXISTS reviews (
  id TEXT PRIMARY KEY, order_id TEXT NOT NULL REFERENCES orders(id), product_id TEXT NOT NULL REFERENCES products(id),
  user_id TEXT NOT NULL REFERENCES users(id), rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),

@@ -73,7 +73,7 @@ export class OrderService {
       await this.repo.audit(tx,actor,'order.transition',id,{from:order.status,to:target},traceId);
     }); return this.repo.detail(id,member ? actor : undefined);
   }
-  async requestRefund(id: string,userId: string,reason: string,traceId: string) {
+  async requestRefund(id: string,userId: string,input: {reason:string;amount?:number;items?:{productId:string;quantity:number}[]},traceId: string) {
     return this.repo.db.transaction(async tx => {
       const order = await this.repo.get(tx,id,true);
       ensure(order.user_id === userId,404,'ORDER_NOT_FOUND','订单不存在');
@@ -81,10 +81,32 @@ export class OrderService {
       ensure(!await tx.one('SELECT id FROM settlements WHERE order_id=?',[id]),409,'ALREADY_SETTLED','订单已结算，请联系客服人工处理');
       const existing = await tx.one('SELECT * FROM refunds WHERE order_id=?',[id]);
       if (existing) return existing;
+      const orderItems = await tx.all('SELECT product_id,price,quantity FROM order_items WHERE order_id=?',[id]);
+      const requested = (input.items || []).filter(item => item.quantity > 0);
+      // 默认整单退款；传入 items 时按所选商品计算金额；传入 amount 时按指定金额（不调整库存）
+      let amount = order.total, refundItems: {productId:string;quantity:number}[] = [];
+      if (requested.length) {
+        const merged: Record<string,number> = {};
+        for (const item of requested) {
+          const ordered = orderItems.find(o => o.product_id === item.productId);
+          ensure(ordered,400,'INVALID_PRODUCT','退款商品不在订单中');
+          ensure(item.quantity <= ordered.quantity,400,'INVALID_REFUND_QUANTITY','退款数量不能超过购买数量');
+          merged[item.productId] = (merged[item.productId] || 0) + item.quantity;
+        }
+        refundItems = Object.entries(merged).map(([productId,quantity]) => ({productId,quantity}));
+        amount = refundItems.reduce((sum,item) => sum + orderItems.find(o => o.product_id === item.productId)!.price*item.quantity,0);
+        ensure(amount > 0,400,'INVALID_REFUND_AMOUNT','退款金额必须大于0');
+      } else if (input.amount != null) {
+        ensure(Number.isInteger(input.amount) && input.amount > 0 && input.amount <= order.total,400,'INVALID_REFUND_AMOUNT','退款金额需大于0且不超过订单总额');
+        amount = input.amount;
+      }
       const refundId=randomUUID(), now=Date.now();
-      await tx.run('INSERT INTO refunds(id,order_id,user_id,reason,status,amount,original_status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)',[refundId,id,userId,reason,'pending',order.total,order.status,now,now]);
-      await this.repo.audit(tx,userId,'refund.request',id,{reason},traceId);
-      return tx.one('SELECT * FROM refunds WHERE id=?',[refundId]);
+      await tx.run('INSERT INTO refunds(id,order_id,user_id,reason,status,amount,original_status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)',[refundId,id,userId,input.reason,'pending',amount,order.status,now,now]);
+      for (const item of refundItems) await tx.run('INSERT INTO refund_items(id,refund_id,product_id,quantity) VALUES(?,?,?,?)',[randomUUID(),refundId,item.productId,item.quantity]);
+      await this.repo.audit(tx,userId,'refund.request',id,{reason:input.reason,amount,partial:refundItems.length>0 || amount<order.total},traceId);
+      const created = (await tx.one('SELECT * FROM refunds WHERE id=?',[refundId]))!;
+      created.items = await tx.all('SELECT product_id,quantity FROM refund_items WHERE refund_id=? ORDER BY product_id',[refundId]);
+      return created;
     });
   }
   async decideRefund(refundId: string,approve: boolean,actor: string,note: string,traceId: string) {
@@ -97,11 +119,22 @@ export class OrderService {
       ensure(refund.status === 'pending',409,'INVALID_STATE','退款已处理');
       if (approve) {
         ensure(!await tx.one('SELECT id FROM settlements WHERE order_id=?',[order.id]),409,'ALREADY_SETTLED','订单已结算');
-        if (['paid','picking'].includes(order.status)) await this.repo.restock(tx,order.id);
-        await tx.run('UPDATE orders SET status=?,updated_at=? WHERE id=?',['refunded',Date.now(),order.id]);
-        await tx.run('UPDATE payments SET status=? WHERE order_id=?',['refunded',order.id]);
-        for (const item of await tx.all('SELECT product_id,quantity FROM order_items WHERE order_id=? ORDER BY product_id',[order.id])) await tx.run('UPDATE products SET sales=sales-? WHERE id=? AND sales>=?',[item.quantity,item.product_id,item.quantity]);
-        await this.repo.emit(tx,'order.refunded',{orderId:order.id,userId:order.user_id});
+        const full = Number(refund.amount) >= Number(order.total);
+        const items = await tx.all('SELECT product_id,quantity FROM refund_items WHERE refund_id=? ORDER BY product_id',[refundId]);
+        if (full) {
+          // 整单退款：归还全部库存并回滚全部销量，订单与支付标记为已退款
+          if (['paid','picking'].includes(order.status)) await this.repo.restock(tx,order.id);
+          for (const item of await tx.all('SELECT product_id,quantity FROM order_items WHERE order_id=? ORDER BY product_id',[order.id])) await tx.run('UPDATE products SET sales=sales-? WHERE id=? AND sales>=?',[item.quantity,item.product_id,item.quantity]);
+          await tx.run('UPDATE orders SET status=?,updated_at=? WHERE id=?',['refunded',Date.now(),order.id]);
+          await tx.run('UPDATE payments SET status=? WHERE order_id=?',['refunded',order.id]);
+        } else if (items.length) {
+          // 部分退款（按商品）：只归还所选商品库存并回滚对应销量，订单状态保持不变
+          for (const item of items) {
+            if (['paid','picking'].includes(order.status)) await tx.run('UPDATE products SET stock=stock+? WHERE id=?',[item.quantity,item.product_id]);
+            await tx.run('UPDATE products SET sales=sales-? WHERE id=? AND sales>=?',[item.quantity,item.product_id,item.quantity]);
+          }
+        }
+        await this.repo.emit(tx, full ? 'order.refunded' : 'order.partially_refunded', {orderId:order.id,userId:order.user_id,amount:refund.amount});
       }
       await tx.run('UPDATE refunds SET status=?,decision_note=?,updated_at=? WHERE id=?',[approve ? 'approved' : 'rejected',note,Date.now(),refundId]);
       await this.repo.audit(tx,actor,'refund.decision',order.id,{approve,note},traceId);
@@ -113,9 +146,13 @@ export class OrderService {
       let amount=0,count=0;
       for (const order of orders) {
         if (await tx.one('SELECT id FROM settlements WHERE order_id=?',[order.id])) continue;
-        if (await tx.one("SELECT id FROM refunds WHERE order_id=? AND status IN ('pending','approved')",[order.id])) continue;
-        await tx.run('INSERT INTO settlements(id,order_id,amount,operator_id,created_at) VALUES(?,?,?,?,?)',[randomUUID(),order.id,order.total,actor,Date.now()]);
-        amount += order.total; count++;
+        const refund = await tx.one('SELECT * FROM refunds WHERE order_id=?',[order.id]);
+        if (refund && refund.status === 'pending') continue;
+        // 已通过的部分退款按净额结算；整单退款订单状态已变为 refunded，不会进入本循环
+        const net = Number(order.total) - (refund && refund.status === 'approved' ? Number(refund.amount) : 0);
+        if (net <= 0) continue;
+        await tx.run('INSERT INTO settlements(id,order_id,amount,operator_id,created_at) VALUES(?,?,?,?,?)',[randomUUID(),order.id,net,actor,Date.now()]);
+        amount += net; count++;
       }
       await this.repo.audit(tx,actor,'settlement.create','batch',{count,amount},traceId);
       return {count,amount};

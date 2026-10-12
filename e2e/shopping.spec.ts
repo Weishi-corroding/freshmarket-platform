@@ -88,7 +88,7 @@ test('member checkout, payment, staff fulfillment, receipt, review and settlemen
   const token=await staffToken(request),headers={Authorization:'Bearer '+token};
   for(const status of ['picking','delivering'])expect((await request.post('/api/admin/orders/'+order+'/status',{headers,data:{status}})).status()).toBe(200);
   await page.getByRole('button',{name:'刷新订单',exact:true}).click();await page.getByRole('button',{name:'确认收货',exact:true}).first().click();await page.getByRole('button',{name:'确认收到商品',exact:true}).click();
-  await expect(page.getByRole('dialog')).toBeHidden();await page.getByRole('button',{name:'评价商品',exact:true}).first().click();await page.getByLabel('评价内容',{exact:true}).fill('新鲜好吃，配送包装完整');await page.getByRole('button',{name:'发布评价',exact:true}).click();await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.getByRole('dialog')).toBeHidden();await page.getByRole('button',{name:'评价商品',exact:true}).first().click();await page.getByLabel('评价内容',{exact:true}).pressSequentially('新鲜好吃，配送包装完整');await page.getByRole('button',{name:'发布评价',exact:true}).click();await expect(page.getByRole('dialog')).toBeHidden();
   const first=await request.post('/api/admin/settlements',{headers});expect(first.status()).toBe(200);expect((await first.json()).data.count).toBeGreaterThanOrEqual(1);
   const repeated=await request.post('/api/admin/settlements',{headers});expect((await repeated.json()).data.count).toBe(0);
   await page.goto('/admin');await expect(page.getByRole('heading',{name:'您没有工作台访问权限'})).toBeVisible();
@@ -135,4 +135,22 @@ test('delivery time options mark only the selected slot with a check icon',async
   await expect(page.locator('.delivery-slots label.selected')).toContainText('明日 09:00–12:00');
   await expect(page.locator('.delivery-slots label.selected .slot-box svg')).toBeVisible();
   await expect(page.locator('.delivery-slots label:not(.selected) .slot-box svg')).toHaveCount(0);
+});
+test('modal inputs accept typing and partial refund can be submitted',async({page})=>{
+  await page.goto('/');await register(page);await address(page);await buy(page);
+  await page.getByRole('button',{name:'申请售后',exact:true}).first().click();
+  await page.getByRole('button',{name:'提交售后申请',exact:true}).click();
+  await expect(page.locator('.field-error')).toHaveText('请至少输入5个字符');
+  const reason=page.getByPlaceholder('请描述品质、配送或其他问题，至少5个字');
+  await reason.pressSequentially('部分退款测试原因');
+  await expect(reason).toHaveValue('部分退款测试原因');
+  await expect(page.locator('.field-error')).toHaveCount(0);
+  await expect(page.locator('.refund-summary')).toContainText('整单退款');
+  await page.locator('.refund-check').first().click();
+  await expect(page.locator('.refund-summary')).toContainText('部分退款');
+  await expect(page.locator('.refund-item.chosen')).toHaveCount(1);
+  await page.getByRole('button',{name:'提交售后申请',exact:true}).click();
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.locator('.refund-note').first()).toContainText('退款 ¥29.90');
+  await expect(page.locator('.refund-note').first()).toContainText('部分退款测试原因');
 });

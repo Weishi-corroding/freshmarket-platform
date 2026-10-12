@@ -10,9 +10,10 @@ export class OrderRepository {
   async detail(id: string, userId?: string): Promise<import('../../core/database.js').Row> {
     const row = await this.get(this.db,id);
     ensure(!userId || row.user_id === userId,404,'ORDER_NOT_FOUND','订单不存在');
+    const refund = await this.db.one('SELECT * FROM refunds WHERE order_id=?',[id]) || null;
+    if (refund) refund.items = await this.db.all('SELECT product_id,quantity FROM refund_items WHERE refund_id=? ORDER BY product_id',[refund.id]);
     return { ...row, address: JSON.parse(row.address_snapshot), items: await this.db.all('SELECT * FROM order_items WHERE order_id=?',[id]),
-      refund: await this.db.one('SELECT * FROM refunds WHERE order_id=?',[id]) || null,
-      reviews: await this.db.all('SELECT * FROM reviews WHERE order_id=?',[id]) };
+      refund, reviews: await this.db.all('SELECT * FROM reviews WHERE order_id=?',[id]) };
   }
   async audit(tx: Query, actor: string, action: string, id: string, detail: unknown, traceId: string) {
     await tx.run('INSERT INTO audit_logs(id,actor_id,action,entity_id,detail,trace_id,created_at) VALUES(?,?,?,?,?,?,?)',[randomUUID(),actor,action,id,JSON.stringify(detail),traceId,Date.now()]);

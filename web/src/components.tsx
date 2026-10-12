@@ -2,10 +2,14 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {X,LoaderCircle,ShoppingBasket,AlertCircle,ChevronLeft,ChevronRight} from 'lucide-react';
 export function Modal({title,children,onClose,wide=false}:{title:string;children:ReactNode;onClose:()=>void;wide?:boolean}) {
   const ref=useRef<HTMLDivElement>(null);
+  // 用 ref 保存最新的 onClose，让副作用只在挂载/卸载时执行一次。
+  // 否则父组件每次重渲染（例如输入框 onChange 更新 state）都会因为 onClose 是新函数而重跑副作用，
+  // 重新聚焦弹窗容器并抢走输入框焦点，导致弹窗内无法输入。
+  const onCloseRef=useRef(onClose);onCloseRef.current=onClose;
   useEffect(()=>{const before=document.activeElement as HTMLElement;const overflow=document.body.style.overflow;document.body.style.overflow='hidden';ref.current?.focus();
-    const key=(e:KeyboardEvent)=>{if(e.key==='Escape')onClose();if(e.key==='Tab'){const elements=ref.current?.querySelectorAll<HTMLElement>('button:not([disabled]),input,select,textarea,a[href],[tabindex="0"]');if(!elements?.length)return;const first=elements[0],last=elements[elements.length-1];if(e.shiftKey && (document.activeElement===first || document.activeElement===ref.current)){e.preventDefault();last.focus();}else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}}};
+    const key=(e:KeyboardEvent)=>{if(e.key==='Escape')onCloseRef.current();if(e.key==='Tab'){const elements=ref.current?.querySelectorAll<HTMLElement>('button:not([disabled]),input,select,textarea,a[href],[tabindex="0"]');if(!elements?.length)return;const first=elements[0],last=elements[elements.length-1];if(e.shiftKey && (document.activeElement===first || document.activeElement===ref.current)){e.preventDefault();last.focus();}else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}}};
     document.addEventListener('keydown',key);return()=>{document.body.style.overflow=overflow;document.removeEventListener('keydown',key);before?.focus();};
-  },[onClose]);
+  },[]);
   return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><div className={'modal '+(wide?'wide':'')} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}><div className="modal-heading"><h2>{title}</h2><button className="icon-button" onClick={onClose} aria-label="关闭"><X size={22}/></button></div>{children}</div></div>;
 }
 export function Loading(){return <div className="loading" role="status"><LoaderCircle className="spin" size={28}/>正在加载…</div>;}
