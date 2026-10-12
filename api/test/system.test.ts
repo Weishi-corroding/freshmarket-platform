@@ -34,6 +34,77 @@ test('login, JWT identity and invalid credentials',async()=>{const good=await ap
 test('registration rejects role injection and creates members only',async()=>{const injected=await app.inject({method:'POST',url:'/api/auth/register',payload:{username:'new_user',name:'新会员',password:'Secure12345',role:'admin'}});assert.equal(injected.statusCode,400);const registered=await app.inject({method:'POST',url:'/api/auth/register',payload:{username:'new_user',name:'新会员',password:'Secure12345'}});assert.equal(registered.statusCode,200);assert.equal(registered.json().data.user.role,'member');assert.equal((await app.inject({method:'POST',url:'/api/auth/register',payload:{username:'new_user',name:'新会员',password:'Secure12345'}})).statusCode,409);});
 test('RBAC rejects anonymous, members and staff outside their role',async()=>{assert.equal((await app.inject({url:'/api/admin/dashboard'})).statusCode,401);assert.equal((await request('GET','/api/admin/dashboard',undefined,'member')).status,403);assert.equal((await request('GET','/api/admin/refunds',undefined,'warehouse')).status,403);assert.equal((await request('POST','/api/admin/products/p01/stock',{delta:5,reason:'入库'},'operator')).status,403);assert.equal((await request('GET','/api/admin/audit',undefined,'finance')).status,403);});
 test('catalog validates sort, bounds pagination, and parameterizes search',async()=>{assert.equal((await request('GET','/api/products?pageSize=1000')).status,400);assert.equal((await request('GET','/api/products?sort=stock%20DESC')).status,400);const sql=await request('GET',"/api/products?q="+encodeURIComponent("' OR 1=1 --"));assert.equal(sql.status,200);assert.equal(sql.body.data.total,0);const page=await request('GET','/api/products?page=2&pageSize=4');assert.equal(page.body.data.items.length,4);assert.equal(page.body.data.total,24);});
+test('catalog search tolerates a single name typo and requires every keyword',async()=>{
+  const cases:[string,string[]][]=[
+    ['三文余',['p07']],['西蓝花',['p14']],['三鱼文',['p07']],
+    ['红草莓',['p01']],['红颜颜草莓',['p01']],['挪威 三文余',['p07']],
+    ['苹果 山东',['p06']],['  丹东　草莓  ',['p01']],['车厘子 ｊｊ级',['p04']]
+  ];
+  for(const [q,ids] of cases) {
+    const response=await request('GET','/api/products?'+new URLSearchParams({q}));
+    assert.equal(response.status,200);
+    assert.deepEqual(response.body.data.items.map((p:any)=>p.id),ids,q);
+    assert.equal(response.body.data.total,ids.length,q);
+  }
+});
+test('catalog search rejects insufficient overlaps and literal SQL wildcards',async()=>{
+  for(const q of ['草莓酱','草莓蛋糕','牛奶茶','草莓 牛奶','挪危 三文余','丹冬 草莓','清甜微酥','%','_']) {
+    const response=await request('GET','/api/products?'+new URLSearchParams({q}));
+    assert.equal(response.status,200);
+    assert.equal(response.body.data.total,0,q);
+    assert.deepEqual(response.body.data.items,[],q);
+  }
+  assert.deepEqual((await request('GET','/api/products?'+new URLSearchParams({q:'虾'}))).body.data.items.map((p:any)=>p.id),['p08']);
+  assert.equal((await request('GET','/api/products?'+new URLSearchParams({q:'   '}))).body.data.total,24);
+});
+test('two-character searches use the same overlap algorithm for any product name',async()=>{
+  const meat=(await request('GET','/api/products?'+new URLSearchParams({q:'牛肉'}))).body.data;
+  assert.ok(meat.items.some((p:any)=>p.id==='p10'));
+  assert.ok(meat.items.some((p:any)=>p.id==='p12'));
+  for(const [id,name] of [['p01','甲丁'],['p02','丙乙'],['p03','甲乙'],['p04','戊己']]) {
+    await db.run('UPDATE products SET name=? WHERE id=?',[name,id]);
+  }
+  const generic=(await request('GET','/api/products?'+new URLSearchParams({q:'甲乙'}))).body.data;
+  assert.deepEqual(generic.items.map((p:any)=>p.id),['p03','p01','p02']);
+});
+test('weak overlap results are capped before pagination without capping accurate matches',async()=>{
+  for(let n=1;n<=10;n++)await db.run('UPDATE products SET name=? WHERE id=?',['甲示例'+n,'p'+String(n).padStart(2,'0')]);
+  await db.run('UPDATE products SET name=? WHERE id=?',['甲乙商品','p11']);
+  const query=new URLSearchParams({q:'甲乙',pageSize:'100'});
+  const all=(await request('GET','/api/products?'+query)).body.data;
+  assert.equal(all.total,7);assert.equal(all.items[0].id,'p11');
+  query.set('sort','priceAsc');
+  const price=(await request('GET','/api/products?'+query)).body.data;
+  assert.deepEqual(price.items.map((p:any)=>p.id).sort(),all.items.map((p:any)=>p.id).sort());
+  query.set('pageSize','2');query.set('page','4');
+  const last=(await request('GET','/api/products?'+query)).body.data;
+  assert.equal(last.total,7);assert.equal(last.items.length,1);
+});
+test('search relevance precedes recommendation while explicit price and sales sorts still apply',async()=>{
+  await db.run('UPDATE products SET name=?,views=9999,sales=999 WHERE id=?',['有机西蓝花','p15']);
+  await db.run('UPDATE products SET subtitle=? WHERE id=?',['西兰花的清爽搭档','p16']);
+  const ids=async(sort:string)=>(await request('GET','/api/products?'+new URLSearchParams({q:'西兰花',sort}))).body.data.items.map((p:any)=>p.id);
+  assert.deepEqual(await ids('default'),['p14','p16','p15']);
+  assert.deepEqual(await ids('priceAsc'),['p16','p14','p15']);
+  assert.deepEqual(await ids('priceDesc'),['p15','p14','p16']);
+  assert.deepEqual(await ids('sales'),['p15','p14','p16']);
+});
+test('search filters and ranks all matches before pagination',async()=>{
+  const first=(await request('GET','/api/products?'+new URLSearchParams({q:'山东',page:'1',pageSize:'2'}))).body.data;
+  const second=(await request('GET','/api/products?'+new URLSearchParams({q:'山东',page:'2',pageSize:'2'}))).body.data;
+  assert.equal(first.total,6);assert.equal(second.total,6);
+  assert.deepEqual(first.items.map((p:any)=>p.id),['p06','p15']);
+  assert.deepEqual(second.items.map((p:any)=>p.id),['p13','p16']);
+});
+test('fuzzy search respects category and visibility and also works in the workbench',async()=>{
+  const query=(category:string)=>new URLSearchParams({q:'西蓝花',category}).toString();
+  assert.equal((await request('GET','/api/products?'+query('fruit'))).body.data.total,0);
+  assert.equal((await request('GET','/api/products?'+query('vegetable'))).body.data.total,1);
+  await db.run('UPDATE products SET active=0 WHERE id=?',['p14']);
+  assert.equal((await request('GET','/api/products?'+query('vegetable'))).body.data.total,0);
+  const admin=await request('GET','/api/admin/products?'+query('vegetable'),undefined,'operator');
+  assert.equal(admin.status,200);assert.deepEqual(admin.body.data.items.map((p:any)=>p.id),['p14']);
+});
 test('default sort ranks by weighted recommendation instead of upload time',async()=>{
   const items=(await request('GET','/api/products?pageSize=24')).body.data.items;
   // 种子数据上架时间相同，按时间排序会让 p01 居首；综合推荐应由浏览量最高的 p04 居首

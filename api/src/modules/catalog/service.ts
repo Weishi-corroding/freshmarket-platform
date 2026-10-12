@@ -3,6 +3,7 @@ import type { Database } from '../../core/database.js';
 import { ensure } from '../../core/errors.js';
 import { OrderRepository } from '../orders/repository.js';
 import type { Runtime } from '../../core/runtime.js';
+import { createProductSearch } from './search.js';
 
 export class CatalogService {
   constructor(private db: Database,private repo: OrderRepository,private runtime: Runtime) {}
@@ -10,10 +11,9 @@ export class CatalogService {
     const page=query.page || 1, pageSize=query.pageSize || 12;
     const clauses=admin?[]:['active=1'], params:any[]=[];
     if(query.category) {clauses.push('category_id=?');params.push(query.category);}
-    if(query.q) {clauses.push('(name LIKE ? OR subtitle LIKE ? OR origin LIKE ?)');params.push(...Array(3).fill(`%${query.q}%`));}
     const where=clauses.length?' WHERE '+clauses.join(' AND '):'';
     // 综合推荐排序：销量*0.5 + 浏览量*0.3 + 新品权重*0.2（最近30天视为新品）。
-    // 运营后台保持按上架时间倒序，便于运营查看最新维护的商品。
+    // 未搜索时，运营后台按上架时间倒序，便于查看最新维护的商品。
     const sort=query.sort || 'default';
     const RECOMMEND_WINDOW_MS=30*24*60*60*1000;
     let order='created_at DESC,id', orderParams:any[]=[];
@@ -21,8 +21,26 @@ export class CatalogService {
     else if(sort==='priceDesc') order='price DESC,id';
     else if(sort==='sales') order='sales DESC,id';
     else if(sort==='default' && !admin) { order='(sales*0.5 + views*0.3 + (CASE WHEN created_at>=? THEN 1 ELSE 0 END)*0.2) DESC,id'; orderParams=[Date.now()-RECOMMEND_WINDOW_MS]; }
-    const key=`${this.runtime.cacheNamespace}:catalog:${await this.runtime.version()}:${JSON.stringify(query)}:${admin}`;
+    const key=`${this.runtime.cacheNamespace}:catalog:search-v2:${await this.runtime.version()}:${JSON.stringify(query)}:${admin}`;
     const cached=await this.runtime.cacheGet(key);if(cached)return cached;
+    const search=createProductSearch(query.q || '');
+    if(search) {
+      // Match before pagination so totals and later pages cover every relevant product.
+      // SQL still applies visibility/category filters and the chosen business sort.
+      const candidates=await this.db.all('SELECT * FROM products'+where+' ORDER BY '+order,[...params,...orderParams]);
+      const matches=candidates.flatMap(product=>{
+        const score=search({name:product.name,subtitle:product.subtitle,origin:product.origin});
+        return score===undefined?[]:[{product,score}];
+      });
+      // Keep only the six most relevant weak overlaps, independently of pagination/sort.
+      // Accurate and single-edit matches are not capped.
+      const ranked=[...matches].sort((a,b)=>b.score-a.score || (a.score<1?
+        (b.product.sales-a.product.sales)*0.5+(b.product.views-a.product.views)*0.3 || String(a.product.id).localeCompare(String(b.product.id)):0));
+      const partialIds=new Set(ranked.filter(match=>match.score<1).slice(0,6).map(match=>match.product.id));
+      const relevant=(sort==='default'?ranked:matches).filter(match=>match.score>=1 || partialIds.has(match.product.id));
+      const items=relevant.slice((page-1)*pageSize,page*pageSize).map(match=>match.product);
+      const data={items,total:relevant.length,page,pageSize};await this.runtime.cacheSet(key,data);return data;
+    }
     const total=Number((await this.db.one('SELECT COUNT(*) AS count FROM products'+where,params))!.count);
     const items=await this.db.all('SELECT * FROM products'+where+' ORDER BY '+order+' LIMIT ? OFFSET ?',[...params,...orderParams,pageSize,(page-1)*pageSize]);
     const data={items,total,page,pageSize};await this.runtime.cacheSet(key,data);return data;
