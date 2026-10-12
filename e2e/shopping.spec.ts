@@ -59,6 +59,21 @@ test('desktop catalog, real local images, search and product details',async({pag
   await expect(page.getByText('0–4°C 冷藏，充分加热',{exact:true})).toBeVisible();
   expect(errors).toEqual([]);
 });
+test('top navigation highlight stays in sync with the icon category bar',async({page})=>{
+  await page.setViewportSize({width:1440,height:1050});await page.goto('/');
+  const nav=page.locator('.main-nav'),iconBar=page.locator('.category-section');
+  await expect(nav.getByRole('link',{name:'首页',exact:true})).toHaveClass(/active/);
+  await nav.getByRole('link',{name:'海鲜水产',exact:true}).click();
+  await expect(nav.getByRole('link',{name:'海鲜水产',exact:true})).toHaveClass(/active/);
+  await expect(nav.getByRole('link',{name:'首页',exact:true})).not.toHaveClass(/active/);
+  await expect(iconBar.getByRole('button',{name:'海鲜水产',exact:true})).toHaveClass(/selected/);
+  await iconBar.getByRole('button',{name:'时令水果',exact:true}).click();
+  await expect(nav.getByRole('link',{name:'时令水果',exact:true})).toHaveClass(/active/);
+  await expect(iconBar.getByRole('button',{name:'时令水果',exact:true})).toHaveClass(/selected/);
+  await nav.getByRole('link',{name:'首页',exact:true}).click();
+  await expect(nav.getByRole('link',{name:'首页',exact:true})).toHaveClass(/active/);
+  await expect(iconBar.getByRole('button',{name:'全部好物',exact:true})).toHaveClass(/selected/);
+});
 test('mobile shop has usable controls and no horizontal overflow',async({page})=>{
   await page.setViewportSize({width:390,height:844});await page.goto('/');
   await expect(page.locator('.product-card')).toHaveCount(12);

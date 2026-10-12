@@ -2,11 +2,11 @@
   "config": {
     "argv": [
       "C:\\Program Files\\nodejs\\node.exe",
-      "G:\\Code\\AI Help\\lab4\\node_modules\\@playwright\\test\\cli.js",
+      "C:\\Users\\fuyi\\Desktop\\freshmarket-platform-main\\node_modules\\@playwright\\test\\cli.js",
       "test"
     ],
-    "configFile": "G:\\Code\\AI Help\\lab4\\playwright.config.ts",
-    "rootDir": "G:/Code/AI Help/lab4/e2e",
+    "configFile": "C:\\Users\\fuyi\\Desktop\\freshmarket-platform-main\\playwright.config.ts",
+    "rootDir": "C:/Users/fuyi/Desktop/freshmarket-platform-main/e2e",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -22,7 +22,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "G:/Code/AI Help/lab4/test-results",
+        "outputDir": "C:/Users/fuyi/Desktop/freshmarket-platform-main/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -30,7 +30,7 @@
         },
         "id": "",
         "name": "",
-        "testDir": "G:/Code/AI Help/lab4/e2e",
+        "testDir": "C:/Users/fuyi/Desktop/freshmarket-platform-main/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -61,7 +61,12 @@
     "updateSourceMethod": "patch",
     "version": "1.63.0",
     "workers": 1,
-    "webServer": null
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": true,
+      "timeout": 60000
+    }
   },
   "suites": [
     {
@@ -86,12 +91,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1073,
+                  "duration": 7408,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-06T08:08:10.831Z",
+                  "startTime": "2026-10-12T00:49:03.946Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -102,6 +107,40 @@
           "id": "f177f4eaa9abb9f5894f-92174939eaf101c849b1",
           "file": "shopping.spec.ts",
           "line": 47,
+          "column": 5
+        },
+        {
+          "title": "top navigation highlight stays in sync with the icon category bar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1020,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T00:49:11.923Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-99a810b093de59a74a97",
+          "file": "shopping.spec.ts",
+          "line": 62,
           "column": 5
         },
         {
@@ -120,12 +159,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 624,
+                  "duration": 866,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-06T08:08:12.181Z",
+                  "startTime": "2026-10-12T00:49:12.956Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -135,7 +174,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-3c6cf8daaa4fc8b0c811",
           "file": "shopping.spec.ts",
-          "line": 62,
+          "line": 77,
           "column": 5
         },
         {
@@ -154,12 +193,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1481,
+                  "duration": 2765,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-06T08:08:12.810Z",
+                  "startTime": "2026-10-12T00:49:13.834Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -169,7 +208,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-6f715e1bb694aa769313",
           "file": "shopping.spec.ts",
-          "line": 70,
+          "line": 85,
           "column": 5
         },
         {
@@ -188,12 +227,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1971,
+                  "duration": 3806,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-06T08:08:14.298Z",
+                  "startTime": "2026-10-12T00:49:16.609Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -203,7 +242,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-331d9f94bc69352a6230",
           "file": "shopping.spec.ts",
-          "line": 81,
+          "line": 96,
           "column": 5
         },
         {
@@ -222,12 +261,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 614,
+                  "duration": 1501,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-06T08:08:16.280Z",
+                  "startTime": "2026-10-12T00:49:20.428Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -237,7 +276,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-2e5cfb8cefad25feb721",
           "file": "shopping.spec.ts",
-          "line": 91,
+          "line": 106,
           "column": 5
         }
       ]
@@ -245,9 +284,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-06T08:08:10.566Z",
-    "duration": 6634.67,
-    "expected": 5,
+    "startTime": "2026-10-12T00:48:55.919Z",
+    "duration": 26624.107,
+    "expected": 6,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
