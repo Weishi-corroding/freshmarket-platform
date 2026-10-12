@@ -110,3 +110,29 @@ test('warehouse UI shows fulfillment and inventory but hides privileged sections
   await expect(page.locator('table').getByRole('button',{name:'调库存',exact:true}).first()).toBeVisible();
   await page.goto('/admin/users');await expect(page.getByRole('heading',{name:'当前账号没有此页面权限'})).toBeVisible();
 });
+test('header delivery address selector switches regions and syncs the label',async({page})=>{
+  await page.setViewportSize({width:1440,height:1050});await page.goto('/');
+  const selector=page.getByRole('button',{name:'选择配送地址',exact:true});
+  await expect(selector).toContainText('上海 · 张江');
+  await selector.click();
+  const menu=page.getByRole('listbox',{name:'选择配送地址'});
+  await expect(menu).toBeVisible();
+  await expect(menu).toContainText('可配送区域');
+  await menu.getByRole('option',{name:/北京 · 朝阳/}).click();
+  await expect(menu).toBeHidden();
+  await expect(selector).toContainText('北京 · 朝阳');
+  await expect(selector).toContainText('北京市朝阳区');
+});
+test('delivery time options mark only the selected slot with a check icon',async({page})=>{
+  await page.goto('/');await register(page);await address(page);
+  await page.goto('/');
+  await page.getByRole('button',{name:'加入购物车 丹东红颜草莓',exact:true}).click();
+  await expect(page.getByRole('button',{name:'购物车 1 件',exact:true})).toBeVisible();
+  await page.goto('/checkout');
+  await expect(page.locator('.delivery-slots label.selected')).toHaveCount(1);
+  await expect(page.locator('.delivery-slots label.selected .slot-check')).toBeVisible();
+  await page.locator('.delivery-slots label').filter({hasText:'明日 09:00–12:00'}).click();
+  await expect(page.locator('.delivery-slots label.selected')).toContainText('明日 09:00–12:00');
+  await expect(page.locator('.delivery-slots label.selected .slot-check')).toBeVisible();
+  await expect(page.locator('.delivery-slots label:not(.selected) .slot-check')).toHaveCount(0);
+});

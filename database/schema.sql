@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS products (
  id TEXT PRIMARY KEY, category_id TEXT NOT NULL REFERENCES categories(id), name TEXT NOT NULL,
  subtitle TEXT NOT NULL, description TEXT NOT NULL, price INTEGER NOT NULL CHECK(price > 0),
  original_price INTEGER NOT NULL, stock INTEGER NOT NULL CHECK(stock >= 0), sales INTEGER NOT NULL DEFAULT 0,
+ views INTEGER NOT NULL DEFAULT 0,
  image TEXT NOT NULL, unit TEXT NOT NULL, origin TEXT NOT NULL, storage TEXT NOT NULL, tag TEXT NOT NULL,
  active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)), created_at BIGINT NOT NULL
 );

@@ -12,15 +12,25 @@ export class CatalogService {
     if(query.category) {clauses.push('category_id=?');params.push(query.category);}
     if(query.q) {clauses.push('(name LIKE ? OR subtitle LIKE ? OR origin LIKE ?)');params.push(...Array(3).fill(`%${query.q}%`));}
     const where=clauses.length?' WHERE '+clauses.join(' AND '):'';
-    const sort:Record<string,string>={default:'created_at DESC,id',priceAsc:'price ASC,id',priceDesc:'price DESC,id',sales:'sales DESC,id'};
+    // 综合推荐排序：销量*0.5 + 浏览量*0.3 + 新品权重*0.2（最近30天视为新品）。
+    // 运营后台保持按上架时间倒序，便于运营查看最新维护的商品。
+    const sort=query.sort || 'default';
+    const RECOMMEND_WINDOW_MS=30*24*60*60*1000;
+    let order='created_at DESC,id', orderParams:any[]=[];
+    if(sort==='priceAsc') order='price ASC,id';
+    else if(sort==='priceDesc') order='price DESC,id';
+    else if(sort==='sales') order='sales DESC,id';
+    else if(sort==='default' && !admin) { order='(sales*0.5 + views*0.3 + (CASE WHEN created_at>=? THEN 1 ELSE 0 END)*0.2) DESC,id'; orderParams=[Date.now()-RECOMMEND_WINDOW_MS]; }
     const key=`${this.runtime.cacheNamespace}:catalog:${await this.runtime.version()}:${JSON.stringify(query)}:${admin}`;
     const cached=await this.runtime.cacheGet(key);if(cached)return cached;
     const total=Number((await this.db.one('SELECT COUNT(*) AS count FROM products'+where,params))!.count);
-    const items=await this.db.all('SELECT * FROM products'+where+' ORDER BY '+(sort[query.sort] || sort.default)+' LIMIT ? OFFSET ?',[...params,pageSize,(page-1)*pageSize]);
+    const items=await this.db.all('SELECT * FROM products'+where+' ORDER BY '+order+' LIMIT ? OFFSET ?',[...params,...orderParams,pageSize,(page-1)*pageSize]);
     const data={items,total,page,pageSize};await this.runtime.cacheSet(key,data);return data;
   }
   async detail(id:string) {
     const product=await this.db.one('SELECT * FROM products WHERE id=? AND active=1',[id]);ensure(product,404,'PRODUCT_NOT_FOUND','商品不存在或已下架');
+    // 记录一次浏览，作为综合推荐的“浏览量”权重来源
+    await this.db.run('UPDATE products SET views=views+1 WHERE id=?',[id]);
     const reviews=await this.db.all('SELECT r.rating,r.content,r.created_at,u.name FROM reviews r JOIN users u ON u.id=r.user_id WHERE r.product_id=? ORDER BY r.created_at DESC LIMIT 30',[id]);
     return {...product,reviews};
   }

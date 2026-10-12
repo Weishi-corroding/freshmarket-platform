@@ -1,24 +1,30 @@
 import {createContext,useContext,useEffect,useState,type ReactNode} from 'react';
 import {api,json} from './api';
-import type {Cart,User} from './types';
+import type {Address,Cart,Delivery,User} from './types';
 import {Modal} from './components';
 import {CheckCircle2,AlertCircle,Leaf} from 'lucide-react';
 const emptyCart:Cart={items:[],subtotal:0,total:0,deliveryFee:0,count:0};
-interface Store {user:User|null;cart:Cart;refreshCart:()=>Promise<void>;add:(id:string,n?:number)=>Promise<void>;setQuantity:(id:string,n:number)=>Promise<void>;login:()=>void;logout:()=>void;notify:(message:string,error?:boolean)=>void;}
+// 顶部地址选择器的默认值，未登录或没有收货地址时使用
+const defaultDelivery:Delivery={id:'preset-shanghai-zhangjiang',label:'上海 · 张江',detail:'上海市浦东新区 张江路88号'};
+const readDelivery=():Delivery=>{try{const raw=localStorage.getItem('fresh-delivery');if(raw)return JSON.parse(raw) as Delivery;}catch{}return defaultDelivery;};
+interface Store {user:User|null;cart:Cart;addresses:Address[];delivery:Delivery;refreshCart:()=>Promise<void>;refreshAddresses:()=>Promise<void>;setDelivery:(value:Delivery)=>void;add:(id:string,n?:number)=>Promise<void>;setQuantity:(id:string,n:number)=>Promise<void>;login:()=>void;logout:()=>void;notify:(message:string,error?:boolean)=>void;}
 const Context=createContext<Store>(null!);
 export const useStore=()=>useContext(Context);
 export function StoreProvider({children}:{children:ReactNode}){
-  const[user,setUser]=useState<User|null>(null),[cart,setCart]=useState<Cart>(emptyCart),[authOpen,setAuthOpen]=useState(false),[toast,setToast]=useState<{message:string;error:boolean}|null>(null),[pending,setPending]=useState<string>();
+  const[user,setUser]=useState<User|null>(null),[cart,setCart]=useState<Cart>(emptyCart),[addresses,setAddresses]=useState<Address[]>([]),[delivery,setDeliveryState]=useState<Delivery>(readDelivery),[authOpen,setAuthOpen]=useState(false),[toast,setToast]=useState<{message:string;error:boolean}|null>(null),[pending,setPending]=useState<string>();
   const notify=(message:string,error=false)=>setToast({message,error});
   useEffect(()=>{if(toast){const t=setTimeout(()=>setToast(null),4500);return()=>clearTimeout(t);}},[toast]);
   useEffect(()=>{if(sessionStorage.getItem('fresh-token'))api<User>('/auth/me').then(setUser).catch(()=>{sessionStorage.removeItem('fresh-token');setUser(null);});},[]);
   const refreshCart=async()=>{if(sessionStorage.getItem('fresh-token'))setCart(await api<Cart>('/cart'));};
+  const refreshAddresses=async()=>{if(sessionStorage.getItem('fresh-token'))setAddresses(await api<Address[]>('/addresses'));};
+  const setDelivery=(value:Delivery)=>{setDeliveryState(value);try{localStorage.setItem('fresh-delivery',JSON.stringify(value));}catch{}};
   useEffect(()=>{if(user)refreshCart().catch(e=>notify(e.message,true));else setCart(emptyCart);},[user?.id]);
+  useEffect(()=>{if(user)refreshAddresses().catch(()=>{});else setAddresses([]);},[user?.id]);
   const add=async(id:string,n=1)=>{if(!user){setPending(id);setAuthOpen(true);return;}try{setCart(await api<Cart>('/cart',{method:'POST',body:json({productId:id,quantity:n})}));notify('已加入购物车');}catch(e:any){notify(e.message,true);}};
   const setQuantity=async(id:string,n:number)=>{try{setCart(await api<Cart>('/cart/'+id,{method:'PUT',body:json({quantity:n})}));}catch(e:any){notify(e.message,true);}};
   const complete=async(value:{user:User;token:string})=>{sessionStorage.setItem('fresh-token',value.token);setUser(value.user);setAuthOpen(false);notify('欢迎回来，'+value.user.name);if(pending){try{setCart(await api<Cart>('/cart',{method:'POST',body:json({productId:pending,quantity:1})}));}catch(e:any){notify(e.message,true);}setPending(undefined);}};
   const logout=()=>{sessionStorage.removeItem('fresh-token');setUser(null);setCart(emptyCart);notify('已退出登录');};
-  return <Context.Provider value={{user,cart,refreshCart,add,setQuantity,notify,login:()=>setAuthOpen(true),logout}}>{children}{authOpen&&<AuthModal onClose={()=>{setAuthOpen(false);setPending(undefined);}} onComplete={complete}/ >}{toast&&<div className={'toast '+(toast.error?'toast-error':'')} role={toast.error?'alert':'status'}>{toast.error?<AlertCircle size={20}/>:<CheckCircle2 size={20}/>}<span>{toast.message}</span></div>}</Context.Provider>;
+  return <Context.Provider value={{user,cart,addresses,delivery,refreshCart,refreshAddresses,setDelivery,add,setQuantity,notify,login:()=>setAuthOpen(true),logout}}>{children}{authOpen&&<AuthModal onClose={()=>{setAuthOpen(false);setPending(undefined);}} onComplete={complete}/ >}{toast&&<div className={'toast '+(toast.error?'toast-error':'')} role={toast.error?'alert':'status'}>{toast.error?<AlertCircle size={20}/>:<CheckCircle2 size={20}/>}<span>{toast.message}</span></div>}</Context.Provider>;
 }
 function AuthModal({onClose,onComplete}:{onClose:()=>void;onComplete:(v:{user:User;token:string})=>Promise<void>}){
   const[register,setRegister]=useState(false),[username,setUsername]=useState(''),[password,setPassword]=useState(''),[name,setName]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
