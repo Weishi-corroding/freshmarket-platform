@@ -48,6 +48,8 @@
 .modal-actions .button{border-radius:4px;padding:10px 20px}
 @media(max-width:1100px){.location-wrap{display:none}}
 .product-bottom{gap:8px;flex-wrap:wrap}.product-quantity{flex-shrink:0}.product-quantity .quantity{height:33px;gap:4px;border:0;border-radius:0;overflow:visible}.product-quantity .quantity button{width:33px;height:33px;border-radius:50%;background:var(--teal);color:#fff;font-size:1.2rem;display:grid;place-items:center}.product-quantity .quantity button:first-child{background:#fff;color:var(--teal);border:1px solid var(--teal)}.product-quantity .quantity span{width:20px;font-variant-numeric:tabular-nums}.product-quantity .quantity button:last-child:hover:not(:disabled){background:var(--teal-dark)}
+.product-stock{display:flex;flex-wrap:wrap;gap:0 5px;margin-top:8px;color:var(--teal-dark);font-size:.7rem;line-height:1.6;font-variant-numeric:tabular-nums}.product-stock>span{white-space:nowrap}.product-stock-low{color:#a56723}.product-stock-empty{color:var(--muted)}
+@media(max-width:560px){.product-stock{font-size:.63rem;margin-top:6px}}
 @media(max-width:560px){.product-bottom{gap:6px}.product-quantity .quantity{height:29px;gap:2px}.product-quantity .quantity button{width:29px;height:29px}.product-quantity .quantity span{width:18px}}
 
 .hero-carousel{--hero-bg:#e3f3ed;--hero-heading:#154b3e;--hero-text:#557468;--hero-accent:#157650}

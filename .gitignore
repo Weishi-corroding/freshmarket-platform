@@ -11,6 +11,7 @@ web/tsconfig.tsbuildinfo
 *.sqlite*
 test-results/
 playwright-report/
+output/playwright/
 coverage/
 deliverables/*.zip
 textbook.txt

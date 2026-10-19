@@ -30,18 +30,44 @@ export const productData = [
   ['p21','ready','鲜肉小馄饨','皮薄馅鲜，十分钟好味道',1990,2490,110,'dumplings','300g / 袋','上海','−18°C 冷冻','快手好菜',240],
   ['p22','ready','意式番茄意面','浓香番茄酱，轻松一餐',2490,2990,90,'pasta','350g / 盒','本地中央厨房','0–4°C 冷藏','快手好菜',200],
   ['p23','ready','轻食鸡肉沙拉','荤素均衡，健康轻盈',2890,3590,50,'salad','280g / 盒','本地中央厨房','0–4°C 冷藏，当日食用','轻食优选',310],
-  ['p24','fruit','海南香甜香蕉','香甜软糯，能量补给',1290,1690,140,'banana','1把 / 约750g','海南乐东','阴凉通风处','产地直采',280]
+  ['p24','fruit','海南香甜香蕉','香甜软糯，能量补给',1290,1690,140,'banana','1把 / 约750g','海南乐东','阴凉通风处','产地直采',280],
+  ['p25','fruit','新疆香甜葡萄','颗颗饱满，果香清甜',2290,2990,100,'grape','500g / 盒','新疆吐鲁番','0–4°C 冷藏','产地直采',230],
+  ['p26','seafood','大连半壳扇贝','贝肉鲜嫩，蒜蓉清蒸都美味',2990,3990,80,'scallop','6只 / 约500g','辽宁大连','−18°C 冷冻，充分加热','冷链直达',280],
+  ['p27','seafood','福建鲜活花蛤','鲜甜饱满，煮汤爆炒好搭档',1590,2190,120,'clam','500g / 份','福建宁德','0–4°C 冷藏，当日充分加热食用','今日鲜到',210],
+  ['p28','seafood','舟山梭子蟹','肉质细嫩，清蒸保留原鲜',6990,8990,48,'crab','2只 / 约600g','浙江舟山','0–4°C 冷藏，当日充分加热食用','今日鲜到',360],
+  ['p29','seafood','湛江鲜活生蚝','蚝肉肥美，适合蒜蓉烤制',3990,4990,75,'oyster','6只 / 盒','广东湛江','0–4°C 冷藏，当日充分加热食用','产地直采',260],
+  ['p30','seafood','东海冰鲜鱿鱼','鲜嫩弹牙，爆炒烧烤皆宜',2890,3690,90,'squid','400g / 盒','浙江宁波','0–4°C 冷藏，充分加热','冷链直达',220],
+  ['p31','meat','冷鲜猪肋排','骨肉相连，炖汤红烧都鲜香',3990,4990,85,'ribs','500g / 盒','浙江金华','0–4°C 冷藏，充分加热','今日鲜到',310],
+  ['p32','meat','鲜切鸡胸肉','肉质细嫩，煎烤轻食好搭档',1890,2490,120,'chicken-breast','500g / 盒','江苏南通','0–4°C 冷藏，充分加热','轻食优选',290],
+  ['p33','meat','宁夏精选羊肉','鲜香细嫩，炖煮暖心一锅',5990,7590,60,'lamb','500g / 盒','宁夏盐池','−18°C 冷冻，充分加热','原切精选',250],
+  ['p34','meat','原切牛腱子','筋肉相间，卤煮切片更香',5690,6990,68,'beef-shank','500g / 盒','内蒙古通辽','0–4°C 冷藏，充分加热','原切精选',300],
+  ['p35','vegetable','鲜嫩菠菜','绿叶鲜嫩，清炒煮汤都合适',690,990,180,'spinach','300g / 把','江苏苏州','0–4°C 冷藏','今日鲜到',190],
+  ['p36','vegetable','清甜小白菜','叶嫩梗脆，一炒一碗鲜',590,890,200,'bok-choy','400g / 袋','上海青浦','0–4°C 冷藏','产地直采',170],
+  ['p37','vegetable','农家黄心土豆','绵软香糯，炖煮煎炒皆宜',790,1090,220,'potato','1kg / 袋','甘肃定西','阴凉避光通风处','产地直采',240],
+  ['p38','vegetable','鲜采香菇','菌香浓郁，炖汤提鲜好食材',990,1390,140,'shiitake','250g / 盒','浙江丽水','0–4°C 冷藏','今日鲜到',200],
+  ['p39','dairy','柔软切片吐司','麦香柔软，三明治早餐轻松做',1290,1690,100,'toast','400g / 袋','本地烘焙工坊','常温密封，按包装期限食用','每日鲜烤',230],
+  ['p40','dairy','芝麻原味贝果','外韧内软，越嚼越香',1690,2190,80,'bagel','3个 / 袋','本地烘焙工坊','常温密封，按包装期限食用','早餐优选',210],
+  ['p41','dairy','切达芝士块','浓郁奶香，焗烤三明治好搭档',2290,2990,95,'cheddar','200g / 袋','新西兰','0–4°C 冷藏','早餐优选',180],
+  ['p42','dairy','动物黄油块','乳香醇厚，烘焙煎烤都合适',2490,3290,90,'butter','200g / 块','新西兰','0–4°C 冷藏','烘焙优选',160],
+  ['p43','dairy','原味酥皮蛋挞','挞皮酥香，蛋奶馅细腻',1990,2490,65,'egg-tart','4个 / 盒','本地烘焙工坊','0–4°C 冷藏，复热后食用','每日鲜烤',270],
+  ['p44','ready','手工鲜肉水饺','皮韧馅香，煮出家常好滋味',2290,2990,130,'jiaozi','500g / 袋','江苏扬州','−18°C 冷冻，充分加热','快手好菜',320],
+  ['p45','ready','香菇鲜肉包','松软面皮，鲜香饱满肉馅',1690,2190,110,'baozi','6个 / 360g','浙江杭州','−18°C 冷冻，充分加热','早餐优选',250],
+  ['p46','ready','黑芝麻汤圆','软糯香甜，一口浓浓芝麻香',1290,1690,150,'tangyuan','400g / 袋','河南郑州','−18°C 冷冻，充分加热','暖心甜品',280],
+  ['p47','ready','香酥葱油饼','层层起酥，平底锅轻松煎',1590,1990,120,'scallion-pancake','5张 / 500g','上海','−18°C 冷冻，充分加热','早餐优选',230],
+  ['p48','ready','嘉兴鲜肉粽','粽叶清香，糯米裹着鲜肉香',2490,3290,90,'zongzi','4只 / 600g','浙江嘉兴','−18°C 冷冻，充分加热','快手好菜',260]
 ];
 export async function seed(db: Database) {
   await db.transaction(async tx => {
-    if (await tx.one('SELECT id FROM users LIMIT 1')) return;
+    const hasUsers = Boolean(await tx.one('SELECT id FROM users LIMIT 1'));
     const now = Date.now();
-    for (const [id,name,icon] of categoryData) await tx.run('INSERT INTO categories(id,name,icon) VALUES(?,?,?)',[id,name,icon]);
+    for (const [id,name,icon] of categoryData) await tx.run('INSERT INTO categories(id,name,icon) VALUES(?,?,?) ON CONFLICT(id) DO NOTHING',[id,name,icon]);
     for (const row of productData) {
       const [id,category,name,subtitle,price,original,stock,image,unit,origin,storage,tag,views] = row;
-      await tx.run('INSERT INTO products(id,category_id,name,subtitle,description,price,original_price,stock,sales,views,image,unit,origin,storage,tag,active,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      await tx.run('INSERT INTO products(id,category_id,name,subtitle,description,price,original_price,stock,sales,views,image,unit,origin,storage,tag,active,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING',
         [id,category,name,subtitle,`${name}，${subtitle}。严选产区与合作供应商，批次验收后发货。商品以实际重量与包装标注为准。请按储存建议保存并尽快食用。`,price,original,stock,0,views,`/images/${image}.jpg`,unit,origin,storage,tag,1,now]);
     }
+    // Existing shops receive missing demo products without resetting accounts or business data.
+    if (hasUsers) return;
     const hash = hashPassword(process.env.DEMO_PASSWORD || 'Fresh@123456');
     for (const [role,name] of [['member','林小鲜'],['operator','运营专员'],['warehouse','仓库专员'],['support','客服专员'],['finance','财务专员'],['admin','平台管理员']]) {
       await tx.run('INSERT INTO users(id,username,name,password_hash,role,created_at) VALUES(?,?,?,?,?,?)',[`u-${role}`,role,name,hash,role,now]);

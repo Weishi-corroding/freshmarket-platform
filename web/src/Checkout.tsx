@@ -6,7 +6,7 @@ import {useStore} from './store';
 import {Empty,Failure,Loading,Quantity,useLoad} from './components';
 import {AddressEditor,SignInGate} from './Account';
 import type {Address,Order} from './types';
-export function Checkout(){const{user}=useStore();return user?<CheckoutContent/>:<SignInGate text="登录后查看购物车并结算"/>;}
+export function Checkout(){const{user,memberLoading}=useStore();return memberLoading?<Loading/>:user?.role==='member'?<CheckoutContent/>:<SignInGate text="登录后查看购物车并结算"/>;}
 function CheckoutContent(){
   const{cart,setQuantity,refreshCart,notify,delivery}=useStore(),addresses=useLoad(()=>api<Address[]>('/addresses')),[selected,setSelected]=useState(''),[slot,setSlot]=useState('尽快送达'),[note,setNote]=useState(''),[editor,setEditor]=useState(false),[busy,setBusy]=useState(false),key=useRef(crypto.randomUUID()),navigate=useNavigate();
   useEffect(()=>{if(addresses.data?.length&&!addresses.data.some(a=>a.id===selected)){const preferred=addresses.data.find(a=>a.id===delivery.id);setSelected(preferred?.id || addresses.data.find(a=>a.is_default)?.id || addresses.data[0].id);}},[addresses.data,delivery.id]);

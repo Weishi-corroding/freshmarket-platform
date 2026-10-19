@@ -6,7 +6,7 @@ import {useStore} from './store';
 import {Empty,Failure,Loading,Modal,Pager,useLoad} from './components';
 import {SignInGate} from './Account';
 import type {Order,Page} from './types';
-export function Orders(){const{user}=useStore();return user?<OrdersContent/>:<SignInGate text="登录后查看订单与配送进度"/>;}
+export function Orders(){const{user,memberLoading}=useStore();return memberLoading?<Loading/>:user?.role==='member'?<OrdersContent/>:<SignInGate text="登录后查看订单与配送进度"/>;}
 function OrdersContent(){
   const{notify}=useStore(),[status,setStatus]=useState(''),[page,setPage]=useState(1),[tick,setTick]=useState(0),[dialog,setDialog]=useState<{order:Order;action:string}>(),[busy,setBusy]=useState(false),[reason,setReason]=useState(''),[rating,setRating]=useState(5),[content,setContent]=useState(''),[product,setProduct]=useState(''),[refundItems,setRefundItems]=useState<Record<string,number>>({}),[error,setError]=useState('');
   const orders=useLoad(()=>api<Page<Order>>('/orders?'+new URLSearchParams({status,page:String(page),pageSize:'10'})),[status,page,tick]);

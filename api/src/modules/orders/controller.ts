@@ -2,13 +2,13 @@ import type { FastifyInstance } from 'fastify';
 import type { Context } from '../../core/context.js';
 import { idParams, pageQuery, pagination, result, text } from '../../core/http.js';
 export async function orderRoutes(app:FastifyInstance,ctx:Context) {
-  const authenticated={preHandler:ctx.authenticate};
+  const authenticated={preHandler:ctx.memberOnly};
   app.post<{Body:{addressId:string;deliverySlot:string;note?:string};Headers:{'idempotency-key':string}}>('/api/orders',{
     ...authenticated,schema:{tags:['订单'],security:[{bearerAuth:[]}],headers:{type:'object',required:['idempotency-key'],properties:{'idempotency-key':{type:'string',minLength:8,maxLength:100}}},
       body:{type:'object',required:['addressId','deliverySlot'],additionalProperties:false,properties:{addressId:text(100),deliverySlot:{type:'string',enum:['尽快送达','今日 18:00–20:00','明日 09:00–12:00','明日 14:00–18:00']},note:{type:'string',maxLength:200}}}}
   },async req=>{const order=await ctx.orders.create(req.actor.id,req.headers['idempotency-key'],req.body,req.id);await ctx.runtime.invalidate();return result(req,order);});
   app.get<{Querystring:Record<string,any>}>('/api/orders',{...authenticated,schema:{tags:['订单'],security:[{bearerAuth:[]}],querystring:pageQuery}},async req=>{
-    const p=pagination(req.query),where=' WHERE user_id=?'+(req.query.status?' AND status=?':''),params=[req.actor.id];if(req.query.status)params.push(req.query.status);
+    const p=pagination(req.query),where=' WHERE user_id=? AND deleted_at IS NULL'+(req.query.status?' AND status=?':''),params=[req.actor.id];if(req.query.status)params.push(req.query.status);
     const rows=await ctx.db.all('SELECT id FROM orders'+where+' ORDER BY created_at DESC LIMIT ? OFFSET ?',[...params,p.pageSize,p.offset]);
     return result(req,{items:await Promise.all(rows.map(row=>ctx.repo.detail(row.id,req.actor.id))),total:Number((await ctx.db.one('SELECT COUNT(*) AS count FROM orders'+where,params))!.count),page:p.page,pageSize:p.pageSize});
   });

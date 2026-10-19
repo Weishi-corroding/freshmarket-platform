@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 export class OrderRepository {
   constructor(public db: Database) {}
   async get(tx: Query, id: string, lock = false) {
-    const row = await tx.one('SELECT * FROM orders WHERE id=?' + (lock && this.db.dialect === 'postgres' ? ' FOR UPDATE' : ''),[id]);
+    const row = await tx.one('SELECT * FROM orders WHERE id=? AND deleted_at IS NULL' + (lock && this.db.dialect === 'postgres' ? ' FOR UPDATE' : ''),[id]);
     ensure(row,404,'ORDER_NOT_FOUND','订单不存在'); return row;
   }
   async detail(id: string, userId?: string): Promise<import('../../core/database.js').Row> {

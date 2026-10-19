@@ -148,5 +148,149 @@
     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Lates_calcarifer%2C_2014-09-19a.jpg/960px-Lates_calcarifer%2C_2014-09-19a.jpg",
     "source": "https://commons.wikimedia.org/wiki/File:Lates_calcarifer,_2014-09-19a.jpg",
     "license": "See Wikimedia file page."
+  },
+  {
+    "name": "bagel",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Bagel_with_sesame_3.jpg/960px-Bagel_with_sesame_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Bagel_with_sesame_3.jpg",
+    "license": "CC BY 4.0 https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "name": "baozi",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Baozi_Chengdu.JPG/960px-Baozi_Chengdu.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Baozi_Chengdu.JPG",
+    "license": "CC0 http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "name": "bok-choy",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Bok_Choy_%2849553125456%29.jpg/960px-Bok_Choy_%2849553125456%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Bok_Choy_(49553125456).jpg",
+    "license": "CC BY 2.0 https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "name": "butter",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG/960px-%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_(cropped).JPG",
+    "license": "CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "name": "cheddar",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/18/Somerset-Cheddar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "source": "https://commons.wikimedia.org/wiki/File:Somerset-Cheddar.jpg",
+    "license": "CC BY-SA 3.0 http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "name": "scallion-pancake",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Scallion_pancake_%284354349219%29.jpg/960px-Scallion_pancake_%284354349219%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Scallion_pancake_(4354349219).jpg",
+    "license": "CC BY 2.0 https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "name": "egg-tart",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/HK_SSP_%E9%95%B7%E6%B2%99%E7%81%A3_Cheung_Sha_Wan_%E6%B7%B1%E7%9B%9B%E8%B7%AF_Sham_Shing_Road_%E6%B3%93%E6%99%AF%E6%BB%99%E5%95%86%E5%A0%B4_Banyan_Mall_shop_%E8%9B%8B%E6%92%BB%E7%8E%8B_King_Bakery_Studio_December_2019_SS2_egg_tarts.jpg/960px-HK_SSP_%E9%95%B7%E6%B2%99%E7%81%A3_Cheung_Sha_Wan_%E6%B7%B1%E7%9B%9B%E8%B7%AF_Sham_Shing_Road_%E6%B3%93%E6%99%AF%E6%BB%99%E5%95%86%E5%A0%B4_Banyan_Mall_shop_%E8%9B%8B%E6%92%BB%E7%8E%8B_King_Bakery_Studio_December_2019_SS2_egg_tarts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:HK_SSP_%E9%95%B7%E6%B2%99%E7%81%A3_Cheung_Sha_Wan_%E6%B7%B1%E7%9B%9B%E8%B7%AF_Sham_Shing_Road_%E6%B3%93%E6%99%AF%E6%BB%99%E5%95%86%E5%A0%B4_Banyan_Mall_shop_%E8%9B%8B%E6%92%BB%E7%8E%8B_King_Bakery_Studio_December_2019_SS2_egg_tarts.jpg",
+    "license": "CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "name": "grape",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Grapes,_Rostov-on-Don,_Russia.jpg",
+    "license": "CC BY 4.0 https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "name": "jiaozi",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/%E5%8F%B0%E7%81%A3%E5%8D%97%E6%8A%95%E8%8D%89%E5%B1%AF%E6%B0%B4%E9%A4%83Nantou%2C_Taiwan_Caotun_dumplings.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "source": "https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E7%81%A3%E5%8D%97%E6%8A%95%E8%8D%89%E5%B1%AF%E6%B0%B4%E9%A4%83Nantou,_Taiwan_Caotun_dumplings.jpg",
+    "license": "CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "name": "lamb",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Lamb_meat_%281%29.jpg/960px-Lamb_meat_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Lamb_meat_(1).jpg",
+    "license": "CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "name": "oyster",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Crassostrea_gigas_p1040848.jpg/960px-Crassostrea_gigas_p1040848.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Crassostrea_gigas_p1040848.jpg",
+    "license": "CC BY-SA 3.0 http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "name": "crab",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Portunus_trituberculatus.jpg/960px-Portunus_trituberculatus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Portunus_trituberculatus.jpg",
+    "license": "CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "name": "potato",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/960px-Patates.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Patates.jpg",
+    "license": "Public domain"
+  },
+  {
+    "name": "ribs",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Spareribs_20160506_182617113.jpg/960px-Spareribs_20160506_182617113.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Spareribs_20160506_182617113.jpg",
+    "license": "CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "name": "zongzi",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Zongzi.jpg/960px-Zongzi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Zongzi.jpg",
+    "license": "CC BY-SA 3.0 http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "name": "scallop",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/U.S._Scallops_from_Food_Export_Northeast_%2827748727477%29.jpg/960px-U.S._Scallops_from_Food_Export_Northeast_%2827748727477%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:U.S._Scallops_from_Food_Export_Northeast_(27748727477).jpg",
+    "license": "Public domain"
+  },
+  {
+    "name": "clam",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/LittleNeck_clams_USDA96c1862.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "source": "https://commons.wikimedia.org/wiki/File:LittleNeck_clams_USDA96c1862.jpg",
+    "license": "Public domain"
+  },
+  {
+    "name": "squid",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Raw_squid.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "source": "https://commons.wikimedia.org/wiki/File:Raw_squid.jpg",
+    "license": "CC BY 4.0 https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "name": "chicken-breast",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Raw_chicken_slices.jpg/960px-Raw_chicken_slices.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Raw_chicken_slices.jpg",
+    "license": "CC0 http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "name": "beef-shank",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Beef_shank.jpg/960px-Beef_shank.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Beef_shank.jpg",
+    "license": "CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "name": "spinach",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Fresh_Spinach_leaves.jpg/960px-Fresh_Spinach_leaves.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Fresh_Spinach_leaves.jpg",
+    "license": "CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "name": "shiitake",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Fresh_shiitake_mushrooms.jpg/960px-Fresh_shiitake_mushrooms.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Fresh_shiitake_mushrooms.jpg",
+    "license": "CC0 http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "name": "toast",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/A_stack_of_freshly_sliced_bread.jpg/960px-A_stack_of_freshly_sliced_bread.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:A_stack_of_freshly_sliced_bread.jpg",
+    "license": "CC BY 2.0 https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "name": "tangyuan",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Chinese_Tangyuan.jpeg/960px-Chinese_Tangyuan.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "source": "https://commons.wikimedia.org/wiki/File:Chinese_Tangyuan.jpeg",
+    "license": "CC0 http://creativecommons.org/publicdomain/zero/1.0/deed.en"
   }
 ]

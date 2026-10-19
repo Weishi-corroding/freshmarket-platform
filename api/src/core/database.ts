@@ -25,13 +25,20 @@ function postgresQuery(client: Pool | PoolClient): Query {
 }
 export async function createDatabase(url?: string, path = '.runtime/freshmarket.sqlite'): Promise<Database> {
   const schema = readFileSync(new URL('../../../database/schema.sql', import.meta.url), 'utf8');
+  const additions:Record<string,Record<string,string>>={
+    users:{active:'INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1))',session_version:'INTEGER NOT NULL DEFAULT 0',deleted_at:'BIGINT'},
+    products:{views:'INTEGER NOT NULL DEFAULT 0',deleted_at:'BIGINT'},orders:{deleted_at:'BIGINT'}
+  };
   if (url) {
     const pool = new Pool({ connectionString: url, max: 15, connectionTimeoutMillis: 5000, idleTimeoutMillis: 30000 });
     pool.on('error', err => console.error('postgres_pool_error', err.message));
     const query = postgresQuery(pool);
     return { ...query, dialect: 'postgres',
-      // CREATE TABLE IF NOT EXISTS 不会给已存在的表补列，这里为旧库安全地补充 views 列
-      async migrate() { await pool.query(schema); await pool.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS views INTEGER NOT NULL DEFAULT 0'); },
+      async migrate() {
+        await pool.query(schema);
+        for(const [table,columns] of Object.entries(additions))for(const [name,type] of Object.entries(columns))
+          await pool.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${name} ${type}`);
+      },
       async transaction<T>(fn: (tx: Query) => Promise<T>) {
         const client = await pool.connect();
         try { await client.query('BEGIN'); const value = await fn(postgresQuery(client)); await client.query('COMMIT'); return value; }
@@ -58,9 +65,11 @@ export async function createDatabase(url?: string, path = '.runtime/freshmarket.
     run: (sql, params) => locked(() => direct.run(sql, params)),
     async migrate() {
       sqlite.exec(schema);
-      // SQLite 没有 ADD COLUMN IF NOT EXISTS，先查表结构再决定是否补列，兼容已存在的本地数据库
-      const columns = sqlite.prepare('PRAGMA table_info(products)').all() as { name: string }[];
-      if (!columns.some(column => column.name === 'views')) sqlite.exec('ALTER TABLE products ADD COLUMN views INTEGER NOT NULL DEFAULT 0');
+      for(const [table,columns] of Object.entries(additions)) {
+        const existing=sqlite.prepare(`PRAGMA table_info(${table})`).all() as {name:string}[];
+        for(const [name,type] of Object.entries(columns))if(!existing.some(column=>column.name===name))
+          sqlite.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
+      }
     },
     transaction: fn => locked(async () => {
       sqlite.exec('BEGIN IMMEDIATE');

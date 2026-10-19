@@ -1,4 +1,4 @@
-export interface User {id:string;username:string;name:string;role:string;capabilities:string[];}
+export interface User {id:string;username:string;name:string;role:string;accountType:'member'|'staff';capabilities:string[];active?:number;created_at?:number;}
 export interface Category {id:string;name:string;icon:string;}
 export interface Product {id:string;category_id:string;name:string;subtitle:string;description:string;price:number;original_price:number;stock:number;sales:number;views?:number;image:string;unit:string;origin:string;storage:string;tag:string;active:number;reviews?:{rating:number;content:string;name:string;created_at:number}[];}
 export interface Cart {items:(Product & {quantity:number})[];subtotal:number;deliveryFee:number;total:number;count:number;}

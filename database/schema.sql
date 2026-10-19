@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
  id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE, name TEXT NOT NULL,
- password_hash TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'member', created_at BIGINT NOT NULL
+ password_hash TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'member', created_at BIGINT NOT NULL,
+ active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)), session_version INTEGER NOT NULL DEFAULT 0, deleted_at BIGINT
 );
 CREATE TABLE IF NOT EXISTS categories (id TEXT PRIMARY KEY, name TEXT NOT NULL, icon TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS products (
@@ -9,7 +10,7 @@ CREATE TABLE IF NOT EXISTS products (
  original_price INTEGER NOT NULL, stock INTEGER NOT NULL CHECK(stock >= 0), sales INTEGER NOT NULL DEFAULT 0,
  views INTEGER NOT NULL DEFAULT 0,
  image TEXT NOT NULL, unit TEXT NOT NULL, origin TEXT NOT NULL, storage TEXT NOT NULL, tag TEXT NOT NULL,
- active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)), created_at BIGINT NOT NULL
+ active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)), created_at BIGINT NOT NULL, deleted_at BIGINT
 );
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id,active);
 CREATE TABLE IF NOT EXISTS addresses (
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS orders (
  subtotal INTEGER NOT NULL, delivery_fee INTEGER NOT NULL, total INTEGER NOT NULL,
  address_snapshot TEXT NOT NULL, delivery_slot TEXT NOT NULL, note TEXT NOT NULL,
  idempotency_key TEXT NOT NULL, request_hash TEXT NOT NULL, created_at BIGINT NOT NULL,
- expires_at BIGINT NOT NULL, updated_at BIGINT NOT NULL, UNIQUE(user_id,idempotency_key)
+ expires_at BIGINT NOT NULL, updated_at BIGINT NOT NULL, deleted_at BIGINT, UNIQUE(user_id,idempotency_key)
 );
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id,created_at);
 CREATE INDEX IF NOT EXISTS idx_orders_expiry ON orders(status,expires_at);

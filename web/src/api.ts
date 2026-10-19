@@ -1,9 +1,13 @@
 export class ApiError extends Error {constructor(message:string,public code:string,public traceId:string){super(message);}}
+export const memberTokenKey='fresh-member-token',staffTokenKey='fresh-staff-token';
 export async function api<T>(path:string,options:RequestInit={}):Promise<T> {
-  const token=sessionStorage.getItem('fresh-token');
+  const token=sessionStorage.getItem(path.startsWith('/admin/')?staffTokenKey:memberTokenKey);
   const response=await fetch('/api'+path,{...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:`Bearer ${token}`} : {}),...options.headers}});
   const data=await response.json();
-  if(!response.ok || data.code!==0)throw new ApiError(data.message || '请求失败，请稍后重试',data.code || 'NETWORK_ERROR',data.traceId || '');
+  if(!response.ok || data.code!==0){
+    if(response.status===401 && token && !path.endsWith('/login'))window.dispatchEvent(new CustomEvent('fresh-session-expired',{detail:{key:path.startsWith('/admin/')?staffTokenKey:memberTokenKey,token,message:data.message}}));
+    throw new ApiError(data.message || '请求失败，请稍后重试',data.code || 'NETWORK_ERROR',data.traceId || '');
+  }
   return data.data as T;
 }
 export const json=(value:unknown)=>JSON.stringify(value);

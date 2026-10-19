@@ -8,7 +8,9 @@ export class OrderService {
     const fingerprint = createHash('sha256').update(JSON.stringify([input.addressId,input.deliverySlot,input.note || ''])).digest('hex');
     // In PostgreSQL, locking the member serializes their checkout, including the first idempotency insert.
     const id = await this.repo.db.transaction(async tx => {
-      await tx.one('SELECT id FROM users WHERE id=?' + (this.repo.db.dialect === 'postgres' ? ' FOR UPDATE' : ''),[userId]);
+      const member=await tx.one('SELECT id,role FROM users WHERE id=?' + (this.repo.db.dialect === 'postgres' ? ' FOR UPDATE' : ''),[userId]);
+      ensure(member?.role==='member',403,'MEMBER_ONLY','仅会员账号可以下单');
+      ensure(await tx.one('SELECT id FROM users WHERE id=? AND active=1 AND deleted_at IS NULL',[userId]),401,'UNAUTHORIZED','账号不可用');
       const existing = await tx.one('SELECT id,request_hash FROM orders WHERE user_id=? AND idempotency_key=?',[userId,key]);
       if (existing) { ensure(existing.request_hash === fingerprint,409,'IDEMPOTENCY_CONFLICT','同一请求标识不能用于不同订单'); return existing.id; }
       const address = await tx.one('SELECT * FROM addresses WHERE id=? AND user_id=?',[input.addressId,userId]);
@@ -18,7 +20,7 @@ export class OrderService {
       const subtotal = cart.reduce((sum,p) => sum + p.price*p.quantity,0);
       const fee = subtotal >= 9900 ? 0 : 600;
       for (const product of cart) {
-        const changed = await tx.run('UPDATE products SET stock=stock-? WHERE id=? AND active=1 AND stock>=?',[product.quantity,product.id,product.quantity]);
+        const changed = await tx.run('UPDATE products SET stock=stock-? WHERE id=? AND active=1 AND deleted_at IS NULL AND stock>=?',[product.quantity,product.id,product.quantity]);
         ensure(changed === 1,409,'OUT_OF_STOCK',`${product.name}库存不足或已下架，请调整购物车`);
       }
       const orderId = `FM${Date.now()}${randomUUID().slice(0,8)}`, now = Date.now();
@@ -47,19 +49,42 @@ export class OrderService {
       await this.repo.audit(tx,userId,'payment.sandbox',id,{amount:order.total},traceId);
     }); return this.repo.detail(id,userId);
   }
-  async cancel(id: string,userId?: string,traceId = 'scheduler') {
+  async cancel(id: string,userId?: string,traceId = 'scheduler',staffActor?:string) {
     await this.repo.db.transaction(async tx => {
       const order = await this.repo.get(tx,id,true);
       ensure(!userId || order.user_id === userId,404,'ORDER_NOT_FOUND','订单不存在');
       if (order.status === 'cancelled') return;
       // Scheduler checks expiry inside the row lock to avoid racing a payment.
-      if (!userId && (order.status !== 'pending' || Number(order.expires_at) > Date.now())) return;
+      if (!userId && !staffActor && (order.status !== 'pending' || Number(order.expires_at) > Date.now())) return;
       ensure(order.status === 'pending',409,'INVALID_STATE','仅待付款订单可取消');
       await this.repo.restock(tx,id);
       await tx.run('UPDATE orders SET status=?,updated_at=? WHERE id=?',['cancelled',Date.now(),id]);
       await this.repo.emit(tx,'order.cancelled',{orderId:id,userId:order.user_id});
-      await this.repo.audit(tx,userId || 'system','order.cancel',id,{},traceId);
+      await this.repo.audit(tx,staffActor || userId || 'system','order.cancel',id,{},traceId);
     }); return this.repo.detail(id,userId);
+  }
+  async updateDelivery(id:string,input:{name:string;phone:string;detail:string;deliverySlot:string;note:string},actor:string,traceId:string) {
+    await this.repo.db.transaction(async tx=>{
+      const order=await this.repo.get(tx,id,true);
+      ensure(['pending','paid'].includes(order.status),409,'INVALID_STATE','仅待付款或待拣货订单可以修改配送信息');
+      ensure(!await tx.one("SELECT id FROM refunds WHERE order_id=? AND status='pending'",[id]),409,'REFUND_PENDING','售后处理中，暂不能修改配送信息');
+      const old=JSON.parse(order.address_snapshot);
+      // Staff see masked phones. Omitting a replacement keeps the original phone intact.
+      const address={name:input.name.trim(),phone:input.phone || old.phone,detail:input.detail.trim()};
+      ensure(address.name && address.detail.length>=8,400,'ADDRESS_INVALID','请填写完整的收货信息');
+      await tx.run('UPDATE orders SET address_snapshot=?,delivery_slot=?,note=?,updated_at=? WHERE id=?',[JSON.stringify(address),input.deliverySlot,input.note,Date.now(),id]);
+      await this.repo.audit(tx,actor,'order.delivery.update',id,{deliverySlot:input.deliverySlot,phoneChanged:!!input.phone},traceId);
+    });
+    return this.repo.detail(id);
+  }
+  async remove(id:string,actor:string,traceId:string) {
+    await this.repo.db.transaction(async tx=>{
+      const order=await this.repo.get(tx,id,true);
+      ensure(order.status==='cancelled',409,'INVALID_STATE','仅已取消且未付款的错误订单可以删除，请先取消待付款订单');
+      for(const table of ['payments','refunds','settlements'])ensure(!await tx.one(`SELECT id FROM ${table} WHERE order_id=?`,[id]),409,'ORDER_HAS_TRANSACTIONS','有支付、售后或结算记录的订单不能删除');
+      await tx.run('UPDATE orders SET deleted_at=?,updated_at=? WHERE id=?',[Date.now(),Date.now(),id]);
+      await this.repo.audit(tx,actor,'order.delete',id,{status:order.status,total:order.total},traceId);
+    });
   }
   async transition(id: string,target: string,actor: string,traceId: string,member = false) {
     await this.repo.db.transaction(async tx => {

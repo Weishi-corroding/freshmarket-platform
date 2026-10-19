@@ -26,7 +26,7 @@
 | --- | --- | --- |
 | F01 | 分类、搜索、排序、分页 | 搜索名称/副标题/产地；页大小1–100；排序枚举限制 |
 | F02 | 商品详情 | 展示售价、原价、规格、产地、储存方式、库存与真实评价 |
-| F03 | 账号 | 注册固定会员身份；密码哈希；JWT有效期2小时 |
+| F03 | 账号 | 注册固定会员身份；管理员分别完成员工/会员的新增、查询、详情、编辑、密码重置、启停、删除；密码哈希；JWT有效期2小时 |
 | F04 | 购物车 | 增加、修改、移除；数量1–99；读取服务端价格计算小计 |
 | F05 | 地址 | 支持最多20个地址；校验手机号；用户只能修改本人地址 |
 | F06 | 下单 | 校验本人地址及商品可售；订单保存价格、地址和规格快照 |
@@ -36,7 +36,7 @@
 | F10 | 售后 | 已付款未结算订单可申请一次整单或部分售后；审核中冻结履约/结算；已配送商品不回库存 |
 | F11 | 评价 | 已收货且包含该商品才可评价；每个订单商品只评价一次 |
 | F12 | 结算 | 仅已收货、无待审核/通过退款、未结算订单；重复批次不会重复入账 |
-| F13 | 运营后台 | 商品、库存、订单、售后、财务、成员权限、审计按角色开放 |
+| F13 | 运营后台 | 商品增删改查、库存调整、订单配送维护/取消/错误记录删除、售后审核、财务结算、账号与审计查询按角色开放；删除单独校验管理员权限 |
 | F14 | 可靠性 | 业务事件与业务数据同事务写入Outbox；重试和消费去重；服务健康及指标可查询 |
 
 ## 4. 角色权限矩阵
@@ -46,17 +46,23 @@
 | 能力 | 游客 | 会员 | 运营 | 仓库 | 客服 | 财务 | 管理员 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 商品浏览/搜索 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 个人购物/地址/订单 | — | 本人 | 本人 | 本人 | 本人 | 本人 | 本人 |
+| 个人购物/地址/订单 | — | 本人 | — | — | — | — | — |
 | 经营概览 | — | — | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 商品编辑/上下架 | — | — | ✓ | — | — | — | ✓ |
+| 删除商品 | — | — | — | — | — | — | ✓ |
 | 库存入库/损耗 | — | — | — | ✓ | — | — | ✓ |
 | 查看全部订单 | — | — | ✓ | ✓ | ✓ | — | ✓ |
+| 修改发货前配送/取消待付款订单 | — | — | — | — | — | — | ✓ |
+| 删除已取消且无交易的错误订单 | — | — | — | — | — | — | ✓ |
 | 拣货/配送 | — | — | — | ✓ | — | — | ✓ |
 | 退款审核 | — | — | — | — | ✓ | — | ✓ |
 | 财务结算 | — | — | — | — | — | ✓ | ✓ |
-| 成员角色/审计 | — | — | — | — | — | — | ✓ |
+| 员工/会员增删改查与启停 | — | — | — | — | — | — | ✓ |
+| 审计查询 | — | — | — | — | — | — | ✓ |
 
 登录后每次请求重新从数据库读取角色，因此角色撤销立即影响旧JWT。后台隐藏菜单与服务端RBAC同时实施；不能只依赖前端隐藏。
+
+删除账号、商品和错误订单保留数据库历史关联及审计。禁止删除、停用或降级当前管理员，至少保留一名启用的管理员；未完成订单或待审核售后阻止账号删除。重置密码、停用或删除使旧会话失效。错误订单需先取消并归还库存，存在支付、退款、结算记录时禁止删除；售后审核、结算及审计记录不开放任意编辑或删除。
 
 ## 5. 用例图
 
@@ -161,20 +167,23 @@ erDiagram
 
 | 模块 | 方法与路径 | 访问规则 |
 | --- | --- | --- |
-| 账号 | POST `/api/auth/register`, POST `/api/auth/login`, GET `/api/auth/me` | 注册/登录公开，其余JWT |
+| 会员账号 | POST `/api/auth/register`, POST `/api/auth/login`, GET `/api/auth/me` | 注册/登录公开且仅限会员；身份查询须会员JWT |
+| 员工账号 | POST `/api/admin/auth/login`, GET `/api/admin/auth/me` | 仅员工登录；身份查询须员工JWT |
 | 商品 | GET `/api/categories`, GET `/api/products`, GET `/api/products/:id` | 公开 |
-| 购物车 | GET/POST `/api/cart`, PUT `/api/cart/:id` | 本人 |
-| 地址 | GET/POST `/api/addresses`, PUT/DELETE `/api/addresses/:id` | 本人 |
-| 订单 | POST/GET `/api/orders`, GET `/api/orders/:id` | 本人；创建须Idempotency-Key |
-| 支付/取消/收货 | POST `/api/orders/:id/pay`, `/cancel`, `/receive` | 本人+状态机 |
-| 售后/评价 | POST `/api/orders/:id/refund`, `/reviews` | 本人+业务约束 |
-| 消息 | GET `/api/notifications` | 本人 |
+| 购物车 | GET/POST `/api/cart`, PUT `/api/cart/:id` | 会员本人 |
+| 地址 | GET/POST `/api/addresses`, PUT/DELETE `/api/addresses/:id` | 会员本人 |
+| 订单 | POST/GET `/api/orders`, GET `/api/orders/:id` | 会员本人；创建须Idempotency-Key |
+| 支付/取消/收货 | POST `/api/orders/:id/pay`, `/cancel`, `/receive` | 会员本人+状态机 |
+| 售后/评价 | POST `/api/orders/:id/refund`, `/reviews` | 会员本人+业务约束 |
+| 消息 | GET `/api/notifications` | 会员本人 |
 | 后台概览 | GET `/api/admin/dashboard` | dashboard权限 |
 | 商品/库存 | GET/POST `/api/admin/products`, PUT `/:id`, POST `/:id/stock` | 各自RBAC权限 |
 | 后台订单 | GET `/api/admin/orders`, POST `/api/admin/orders/:id/status` | orders/fulfillment权限 |
 | 售后 | GET `/api/admin/refunds`, POST `/:id/decision` | refunds权限 |
 | 结算 | GET/POST `/api/admin/settlements` | settlements权限 |
-| 用户/审计 | GET `/api/admin/users`, PUT `/:id/role`, GET `/api/admin/audit` | users/audit权限 |
+| 员工管理 | GET/POST `/api/admin/users`, PUT `/api/admin/users/:id/role` | users权限；只能创建员工或调整员工岗位 |
+| 会员查询 | GET `/api/admin/members` | users权限；会员与员工不能互相转换 |
+| 审计 | GET `/api/admin/audit` | audit权限 |
 | 运维 | GET `/api/health`, `/api/metrics`, `/api/openapi.json` | metrics在网关阻断外部访问 |
 
 所有业务接口返回 `{code,message,data,traceId}`；分页为 `{items,total,page,pageSize}`。错误使用400/401/403/404/409/429/500等HTTP状态。OpenAPI保留请求体、参数、Bearer鉴权定义。

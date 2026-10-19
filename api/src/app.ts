@@ -10,7 +10,7 @@ import { Registry, Histogram, Counter, collectDefaultMetrics } from 'prom-client
 import { createDatabase,type Database } from './core/database.js';
 import { BusinessError,ensure } from './core/errors.js';
 import { result } from './core/http.js';
-import { capabilities,type Role } from './core/security.js';
+import { accountType,capabilities,type Role } from './core/security.js';
 import { Runtime } from './core/runtime.js';
 import type { Context } from './core/context.js';
 import { seed } from './modules/catalog/seed.js';
@@ -57,9 +57,18 @@ export async function buildApp(options:{db?:Database;logger?:boolean;workers?:bo
     reply.code(status).send({code,message,data:null,traceId:req.id});
   });
   app.setNotFoundHandler((req,reply)=>reply.code(404).send({code:'NOT_FOUND',message:'接口不存在',data:null,traceId:req.id}));
-  const authenticate:Context['authenticate']=async req=>{await req.jwtVerify();const user=await db.one('SELECT id,username,name,role FROM users WHERE id=?',[req.user.sub]);ensure(user,401,'UNAUTHORIZED','登录已失效');req.actor=user;};
-  const permit:Context['permit']=cap=>async req=>{await authenticate(req);ensure(capabilities[req.actor.role as Role]?.includes(cap),403,'FORBIDDEN','当前账号无权执行此操作');};
-  const ctx:Context={db,repo,orders,accounts,catalog,runtime,authenticate,permit};
+  const authenticate:Context['authenticate']=async req=>{
+    await req.jwtVerify();
+    const user=await db.one('SELECT id,username,name,role,active,session_version,created_at FROM users WHERE id=? AND deleted_at IS NULL',[req.user.sub]);
+    ensure(user,401,'UNAUTHORIZED','账号已删除或登录已失效');
+    ensure(user.active===1,401,'ACCOUNT_DISABLED','账号已停用，请联系管理员');
+    ensure((req.user.sessionVersion ?? 0)===user.session_version,401,'SESSION_CHANGED','账号安全设置已更新，请重新登录');
+    ensure(req.user.accountType && req.user.accountType===accountType(user.role),401,'SESSION_CHANGED','账号身份已变更，请从对应入口重新登录');req.actor=user;
+  };
+  const memberOnly:Context['memberOnly']=async req=>{await authenticate(req);ensure(req.actor.role==='member',403,'MEMBER_ONLY','此功能仅限会员账号，请从商城入口登录会员账号');};
+  const staffOnly:Context['staffOnly']=async req=>{await authenticate(req);ensure(accountType(req.actor.role)==='staff',403,'STAFF_ONLY','请从员工入口登录已授权的员工账号');};
+  const permit:Context['permit']=cap=>async req=>{await staffOnly(req);ensure(capabilities[req.actor.role as Role]?.includes(cap),403,'FORBIDDEN','当前账号无权执行此操作');};
+  const ctx:Context={db,repo,orders,accounts,catalog,runtime,authenticate,memberOnly,staffOnly,permit};
   await accountRoutes(app,ctx);await catalogRoutes(app,ctx);await orderRoutes(app,ctx);await adminRoutes(app,ctx);
   app.get('/api/health',{schema:{tags:['运维']}},async req=>{await db.one('SELECT 1 AS ok');return result(req,{status:'ok',database:db.dialect,cache:runtime.redis?.isReady?'connected':process.env.REDIS_URL?'degraded':'local-disabled',queue:runtime.channel?'connected':process.env.AMQP_URL?'degraded':'local-outbox',time:new Date().toISOString()});});
   app.get('/api/openapi.json',{schema:{hide:true}},async()=>app.swagger());
