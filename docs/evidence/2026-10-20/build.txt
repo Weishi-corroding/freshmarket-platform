@@ -1,0 +1,21 @@
+
+> freshmarket-platform@1.0.0 build
+> npm run build -w api && npm run build -w web
+
+
+> @freshmarket/api@1.0.0 build
+> tsc -p tsconfig.json
+
+
+> @freshmarket/web@1.0.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 1741 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.58 kB │ gzip:   0.43 kB
+dist/assets/index-0u0Hucfg.css   55.20 kB │ gzip:  12.03 kB
+dist/assets/index-D5dT1qyG.js   396.03 kB │ gzip: 122.33 kB
+✓ built in 4.46s

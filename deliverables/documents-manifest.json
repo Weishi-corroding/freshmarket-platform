@@ -2,13 +2,17 @@
   "wordDocuments": [
     "鲜境_需求文档.docx",
     "鲜境_设计文档.docx",
-    "鲜境_测试报告.docx",
-    "鲜境_实验报告.docx",
-    "鲜境_部署运维手册.docx",
-    "鲜境_AI过程与决策记录.docx"
+    "鲜境_测试报告.docx"
   ],
-  "presentation": "鲜境_项目汇报.pptx",
-  "slides": 13,
-  "generatedFrom": "docs/*.md, docs/evidence/summary.json, actual screenshots",
-  "date": "2026-10-06"
+  "date": "2026-10-20",
+  "baseSnapshot": "2026-10-18 / bb1bde2",
+  "updateBaseline": "725696a plus 2026-10-20 maintenance changes",
+  "method": "Append maintenance addenda only; preserve existing content and formatting",
+  "pdfPages": {
+    "鲜境_需求文档.pdf": 48,
+    "鲜境_设计文档.pdf": 61,
+    "鲜境_测试报告.pdf": 36
+  },
+  "validation": "docs/evidence/2026-10-20/documents-update.json",
+  "nativeWordRenderValidated": false
 }

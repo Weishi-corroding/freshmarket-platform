@@ -1,0 +1,5 @@
+PASS restore control flow: stop
+PASS restore control flow: pg_restore
+PASS restore control flow: FLUSHDB
+PASS restore control flow: start
+PASS restore control flow: none

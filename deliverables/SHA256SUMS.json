@@ -1,5 +1,40 @@
 {
-  "archive": "FreshMarket-source-and-deliverables.zip",
-  "sha256": "626b6fd041c38471eb70291db9c3a847af20caa06a3090b3a3c035209e15d46d",
-  "bytes": 36489508
+  "date": "2026-10-20",
+  "files": [
+    {
+      "file": "鲜境_测试报告.docx",
+      "bytes": 2996624,
+      "sha256": "9926f5b34f68ef11dd124cc62ff624888b52f565f9ee87181ba0c7f665400826"
+    },
+    {
+      "file": "鲜境_测试报告.pdf",
+      "bytes": 2604791,
+      "sha256": "81f6df0155a708dc1079ecbaf30cc6deb51870af0ac6c78ab3c246ad93717363"
+    },
+    {
+      "file": "鲜境_设计文档.docx",
+      "bytes": 1964614,
+      "sha256": "205924dc905ec5853e16b1632b4247735a51737ba5dad9ce2fe72efcfec7c31e"
+    },
+    {
+      "file": "鲜境_设计文档.pdf",
+      "bytes": 3799025,
+      "sha256": "f402cbb530b5c7ea119e3ab62ec29286c0e9d6379faec696e3e063679f89dede"
+    },
+    {
+      "file": "鲜境_需求文档.docx",
+      "bytes": 1308753,
+      "sha256": "6c7cfce3c20459a11689e9d8f61ff56802f650d799cb8591bd909f61a6040874"
+    },
+    {
+      "file": "鲜境_需求文档.pdf",
+      "bytes": 2616014,
+      "sha256": "cb88d66cae31fe31d6de84a5d3fcd702a975284760c74b713c72f86a69d48d25"
+    }
+  ],
+  "historicalArchive": {
+    "archive": "FreshMarket-source-and-deliverables.zip",
+    "sha256": "626b6fd041c38471eb70291db9c3a847af20caa06a3090b3a3c035209e15d46d",
+    "bytes": 36489508
+  }
 }

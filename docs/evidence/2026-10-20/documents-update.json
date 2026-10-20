@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-20",
+  "method": "append-only maintenance addenda; preserve original content and formatting",
+  "wordCom": "unavailable: 0x8007000E even outside sandbox",
+  "documents": [
+    {
+      "file": "鲜境_需求文档.docx",
+      "originalBodyElementsPreserved": 213,
+      "originalSectionPropertiesPreserved": true,
+      "originalPackagePartsChanged": [
+        "[Content_Types].xml",
+        "word/document.xml",
+        "word/_rels/document.xml.rels"
+      ],
+      "stylesFontsImagesTablesUnchanged": true,
+      "originalPdfPages": 47,
+      "appendedParagraphs": 16,
+      "appendedPdfPages": 1,
+      "totalPdfPages": 48,
+      "originalPdfBytesRetainedAsPrefix": true,
+      "originalPdfPageStreamsAndTextUnchanged": true,
+      "appendixTextMatchesDocx": true,
+      "rendering": "ReportLab from appendix OOXML styles/text; packaged render_docx.py rasterizer; original PDF pages retained exactly"
+    },
+    {
+      "file": "鲜境_设计文档.docx",
+      "originalBodyElementsPreserved": 411,
+      "originalSectionPropertiesPreserved": true,
+      "originalPackagePartsChanged": [
+        "[Content_Types].xml",
+        "word/document.xml",
+        "word/_rels/document.xml.rels"
+      ],
+      "stylesFontsImagesTablesUnchanged": true,
+      "originalPdfPages": 59,
+      "appendedParagraphs": 22,
+      "appendedPdfPages": 2,
+      "totalPdfPages": 61,
+      "originalPdfBytesRetainedAsPrefix": true,
+      "originalPdfPageStreamsAndTextUnchanged": true,
+      "appendixTextMatchesDocx": true,
+      "rendering": "ReportLab from appendix OOXML styles/text; packaged render_docx.py rasterizer; original PDF pages retained exactly"
+    },
+    {
+      "file": "鲜境_测试报告.docx",
+      "originalBodyElementsPreserved": 286,
+      "originalSectionPropertiesPreserved": true,
+      "originalPackagePartsChanged": [
+        "[Content_Types].xml",
+        "word/document.xml",
+        "word/_rels/document.xml.rels"
+      ],
+      "stylesFontsImagesTablesUnchanged": true,
+      "originalPdfPages": 34,
+      "appendedParagraphs": 22,
+      "appendedPdfPages": 2,
+      "totalPdfPages": 36,
+      "originalPdfBytesRetainedAsPrefix": true,
+      "originalPdfPageStreamsAndTextUnchanged": true,
+      "appendixTextMatchesDocx": true,
+      "rendering": "ReportLab from appendix OOXML styles/text; packaged render_docx.py rasterizer; original PDF pages retained exactly"
+    }
+  ]
+}

@@ -11,6 +11,16 @@ groups:
         for: 3m
         labels: {severity: warning}
         annotations: {summary: "API 5xx ratio exceeds 1%"}
+      - alert: FreshmarketDependencyDown
+        expr: fresh_dependency_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "FreshMarket dependency unavailable: {{ $labels.dependency }}"}
+      - alert: FreshmarketOutboxDelayed
+        expr: fresh_outbox_oldest_pending_seconds > 60
+        for: 3m
+        labels: {severity: warning}
+        annotations: {summary: "FreshMarket outbox delivery delayed"}
       - alert: FreshmarketSlowRequests
         expr: histogram_quantile(0.95, sum(rate(fresh_http_duration_seconds_bucket[5m])) by (le)) > 0.5
         for: 3m

@@ -96,6 +96,8 @@ API 接入 OpenTelemetry 链路追踪：请求 ID 即 W3C traceId，接收上游
 
 订单事务使用库存条件更新防超卖；支付、退款和结算采用唯一约束与订单行锁；Outbox 在业务事务中写入事件，RabbitMQ 使用持久化消息、发布确认与消费去重。未配置消息队列的本地模式通过持久化 Outbox 执行进程内消费。详细边界见 [设计文档](docs/design.md)。
 
+RabbitMQ 通道断开、消费者取消或初始化失败后会重建连接与拓扑。发布使用 mandatory 路由检查，不可路由退回、负向确认、5秒确认超时均保留 Outbox 重试；已配置 MQ 时批次中断不会切换为本地消费。监控独立展示数据库探测、Redis/MQ连接就绪和最旧未发送事件时长，并配置依赖故障与事件积压告警。当前缺陷状态与实测边界见 [2026-10-20 维护记录](docs/maintenance-2026-10-20.md)。
+
 ## 验证与复现
 
 ```bash
@@ -119,10 +121,10 @@ PostgreSQL 集成测试可设置 `TEST_DATABASE_URL`；测试会创建独立临�
 - [部署运维](docs/deployment.md)：环境配置、启动、备份、恢复、回滚、监控与故障处理。
 - [AI过程记录](docs/ai-log.md)、[架构决策](docs/adr.md)、[15分钟讲解脚本](docs/demo-script.md)。
 - `database/schema.sql`、`database/seed.sql`、`.github/workflows/ci.yml`、`infra/`。
-- `deliverables/`：Word文档、实验报告、PPT、系统演示视频、源码交付压缩包。
+- `deliverables/`：需求、设计、测试 Word/PDF，保留原有正文与格式，末尾追加 2026-10-20 修订补充；原始历史结论和本轮结果分别记录。
 
 文档生成：`python scripts/generate-deliverables.py`（依赖 `python-docx`、`python-pptx`、Pillow）；源码压缩包：`python scripts/package.py`。姓名、学号、团队分工和签名由提交人据实填写。
 
-`deliverables/` 另含Word和PPT的PDF副本，实际Office渲染结果已经检查。演示视频为WebM格式，包含真实浏览器操作与中文字幕讲解；可使用Edge、Chrome或VLC播放。录屏脚本为 `scripts/record-demo.mjs`，读取本机 `.env.docker`，需要Playwright浏览器与FFmpeg助手；运行 `npx playwright install ffmpeg` 后执行 `node scripts/record-demo.mjs`。自动录屏会创建一名演示会员及真实沙箱订单，不修改现有订单。
+当前检出已不包含旧版 PPT、实验报告、运维手册和演示视频，现有清单可能仍引用历史文件，正式交付前需重新生成并校验。录屏脚本为 `scripts/record-demo.mjs`，读取本机 `.env.docker`，需要 Playwright 浏览器与 FFmpeg；运行 `npx playwright install ffmpeg` 后执行 `node scripts/record-demo.mjs`。自动录屏会创建演示会员及真实沙箱订单。
 
 生成Word/PPT后可在安装Office的Windows运行 `scripts/render-documents.ps1` 导出PDF与预览，再执行 `python scripts/check-deliverables.py` 检查交付物。该渲染步骤是可选工具，不是运行商城的前置条件。交付包不包含本机密钥、依赖安装目录或教材原始材料。

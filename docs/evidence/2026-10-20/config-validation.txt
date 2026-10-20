@@ -1,0 +1,5 @@
+PASS YAML compose.yaml
+PASS YAML infra/alerts.yml
+PASS YAML infra/prometheus.yml
+PASS YAML infra/alertmanager.yml
+PASS Grafana JSON

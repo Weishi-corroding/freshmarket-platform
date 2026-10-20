@@ -1,0 +1,15 @@
+{
+  "isolated": true,
+  "projects": [
+    {
+      "postgresVolume": "freshmarket-check-a_postgres-data",
+      "name": "freshmarket-check-a"
+    },
+    {
+      "postgresVolume": "freshmarket-check-b_postgres-data",
+      "name": "freshmarket-check-b"
+    }
+  ],
+  "command": "docker compose config --format json",
+  "deploymentStarted": false
+}

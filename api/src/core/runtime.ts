@@ -11,9 +11,12 @@ export class Runtime {
   namespace=process.env.MQ_NAMESPACE || 'fresh';
   cacheNamespace=process.env.CACHE_NAMESPACE || 'fresh';
   redis?: RedisClientType; broker?: ChannelModel; channel?: ConfirmChannel;
-  cacheVersion=0; timer?: ReturnType<typeof setInterval>; busy=false; stopping=false; lastConnect=0;
+  cacheVersion=0; timer?: ReturnType<typeof setInterval>; busy=false; stopping=false; connecting=false; lastConnect=0;
   constructor(private db:Database,private logger:FastifyBaseLogger) {}
   async connect() {
+    if(this.connecting || this.stopping)return;
+    this.connecting=true;
+    try {
     this.lastConnect=Date.now();
     if(process.env.REDIS_URL && !this.redis?.isReady) {
       const redis=createClient({url:process.env.REDIS_URL,socket:{connectTimeout:3000,reconnectStrategy:false}});
@@ -21,11 +24,17 @@ export class Runtime {
       try {await redis.connect();this.redis=redis as RedisClientType;} catch {this.logger.warn('cache_disabled');}
     }
     if(process.env.AMQP_URL && !this.channel) {
+      let broker:ChannelModel|undefined;
       try {
-        const broker=await amqp.connect(process.env.AMQP_URL,{timeout:3000});this.broker=broker;
-        broker.on('error',err=>this.logger.warn({error:err.message},'broker_error'));
-        broker.on('close',()=>{this.channel=undefined;this.logger.warn('broker_disconnected_outbox_will_wait');});
-        const ch=await broker.createConfirmChannel();this.channel=ch;
+        broker=await amqp.connect(process.env.AMQP_URL,{timeout:3000});this.broker=broker;
+        const connection=broker;
+        const disconnected=()=>{if(this.broker===connection){this.broker=undefined;this.channel=undefined;}this.logger.warn('broker_disconnected_outbox_will_wait');};
+        const retire=()=>{disconnected();void connection.close().catch(()=>{});};
+        broker.on('error',err=>{this.logger.warn({error:err.message},'broker_error');retire();});
+        broker.on('close',disconnected);
+        const ch=await broker.createConfirmChannel();
+        ch.on('error',err=>{this.logger.warn({error:err.message},'channel_error');retire();});
+        ch.on('close',()=>{if(this.broker===connection)retire();});
         const events=this.namespace+'.events',dead=this.namespace+'.dead',queue=this.namespace+'.notifications';
         await ch.assertExchange(events,'topic',{durable:true});
         await ch.assertExchange(dead,'fanout',{durable:true});
@@ -33,12 +42,30 @@ export class Runtime {
         await ch.assertQueue(queue,{durable:true,arguments:{'x-dead-letter-exchange':dead}});
         await ch.bindQueue(queue,events,'order.*');await ch.prefetch(20);
         await ch.consume(queue,async message=>{
-          if(!message)return;
+          if(!message){retire();return;}
           try {await this.consume(JSON.parse(message.content.toString()),extractContext(message.properties.headers));ch.ack(message);}
-          catch(error){this.logger.error({error},'event_consume_failed');ch.nack(message,false,false);}
+          catch(error){this.logger.error({error},'event_consume_failed');try {ch.nack(message,false,false);}catch {retire();}}
         });
-      } catch(error){this.logger.warn({error},'broker_degraded_outbox_will_wait');}
+        // 拓扑和消费者都已就绪，才允许发布与健康检查报告 connected。
+        if(this.broker===connection && !this.stopping)this.channel=ch;
+        else await connection.close().catch(()=>{});
+      } catch(error){if(broker){if(this.broker===broker){this.broker=undefined;this.channel=undefined;}await broker.close().catch(()=>{});}this.logger.warn({error},'broker_degraded_outbox_will_wait');}
     }
+    } finally {this.connecting=false;}
+  }
+  private publish(ch:ConfirmChannel,row:Row,event:unknown) {
+    return new Promise<void>((resolve,reject)=>{
+      let settled=false;
+      const finish=(error?:Error)=>{if(settled)return;settled=true;clearTimeout(timer);ch.off('return',returned);ch.off('close',closed);ch.off('error',failed);error?reject(error):resolve();};
+      const retire=()=>{if(this.channel===ch)this.channel=undefined;void ch.close().catch(()=>{});};
+      const returned=(message:amqp.Message)=>{if(message.properties.messageId===row.id){finish(new Error('Message is unroutable'));retire();}};
+      const closed=()=>finish(new Error('Publisher channel closed'));
+      const failed=(error:Error)=>finish(error);
+      const timer=setTimeout(()=>{finish(new Error('Publisher confirmation timed out'));retire();},5000);
+      ch.on('return',returned);ch.on('close',closed);ch.on('error',failed);
+      // RabbitMQ 对不可路由消息先发 basic.return 再确认；仅收到 confirm 不足以证明已入队。
+      try {ch.publish(this.namespace+'.events',row.topic,Buffer.from(JSON.stringify(event)),{persistent:true,mandatory:true,messageId:row.id,headers:injectContext()},err=>finish(err || undefined));}catch(error){finish(error as Error);}
+    });
   }
   async cacheGet(key:string) { const redis=this.redis;if(!redis?.isReady)return null;try {const s=await childSpan('redis GET',{'db.system.name':'redis','db.operation.name':'GET'},()=>redis.get(key));return s?JSON.parse(s):null;} catch{return null;} }
   async version() {if(this.redis?.isReady)try{return await this.redis.get(this.cacheNamespace+':catalog:version') || '0';}catch{}return String(this.cacheVersion);}
@@ -70,9 +97,9 @@ export class Runtime {
       // 发布 span 挂在下单请求的 trace 下；RabbitMQ 消息头携带 traceparent，消费者继续同一条链路
       await withSpan(`outbox publish ${row.topic}`,{kind:SpanKind.PRODUCER,parent:extractContext(carrier),attributes:{'messaging.system':this.channel?'rabbitmq':'in-process','messaging.destination.name':row.topic,'messaging.message.id':row.id,'outbox.attempts':Number(row.attempts)+1}},async span=>{
         try {
-          if(this.channel) {
-            const ch=this.channel;
-            await new Promise<void>((resolve,reject)=>{ch.publish(this.namespace+'.events',row.topic,Buffer.from(JSON.stringify(event)),{persistent:true,messageId:row.id,headers:injectContext()},err=>err?reject(err):resolve());});
+          if(process.env.AMQP_URL) {
+            if(!this.channel)throw new Error('Broker disconnected');
+            await this.publish(this.channel,row,event);
           } else await this.consume(event);
           await this.db.run("UPDATE outbox SET status='sent',published_at=? WHERE id=?",[Date.now(),row.id]);
         } catch(error) {span.recordException(error as Error);span.setStatus({code:SpanStatusCode.ERROR,message:'outbox_retry'});await this.db.run("UPDATE outbox SET status='pending' WHERE id=?",[row.id]);this.logger.error({error,eventId:row.id},'outbox_retry');}

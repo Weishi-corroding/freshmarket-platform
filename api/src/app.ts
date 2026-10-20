@@ -5,7 +5,7 @@ import jwt from '@fastify/jwt';
 import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
-import { Registry, Histogram, Counter, collectDefaultMetrics } from 'prom-client';
+import { Registry, Histogram, Counter, Gauge, collectDefaultMetrics } from 'prom-client';
 import { createDatabase,type Database } from './core/database.js';
 import { BusinessError,ensure } from './core/errors.js';
 import { result } from './core/http.js';
@@ -51,6 +51,14 @@ export async function buildApp(options:{db?:Database;logger?:boolean;workers?:bo
   await app.register(swagger,{openapi:{info:{title:'鲜境 FreshMarket API',description:'金额单位为分。开发模式为持久化 SQLite，生产部署为 PostgreSQL。支付端点仅为沙箱。',version:'1.0.0'},components:{securitySchemes:{bearerAuth:{type:'http',scheme:'bearer',bearerFormat:'JWT'}}}}});
   await app.register(swaggerUI,{routePrefix:'/api/docs'});
   const registry=new Registry();collectDefaultMetrics({register:registry});
+  new Gauge({name:'fresh_dependency_up',help:'Database probe and configured cache/queue connection readiness',labelNames:['dependency'],registers:[registry],async collect(){
+    try {await db.one('SELECT 1 AS ok');this.set({dependency:'database'},1);}catch {this.set({dependency:'database'},0);}
+    if(process.env.REDIS_URL)this.set({dependency:'cache'},runtime.redis?.isReady?1:0);
+    if(process.env.AMQP_URL)this.set({dependency:'queue'},runtime.channel?1:0);
+  }});
+  new Gauge({name:'fresh_outbox_oldest_pending_seconds',help:'Age of oldest pending or processing event',registers:[registry],async collect(){
+    try {const row=await db.one("SELECT MIN(created_at) AS oldest FROM outbox WHERE status IN ('pending','processing')");this.set(row?.oldest==null?0:Math.max(0,(Date.now()-Number(row.oldest))/1000));}catch {this.set(NaN);}
+  }});
   const latency=new Histogram({name:'fresh_http_duration_seconds',help:'HTTP request duration',labelNames:['method','route','status'],buckets:[.01,.025,.05,.1,.25,.5,1,2,5],registers:[registry]});
   const count=new Counter({name:'fresh_http_requests_total',help:'HTTP requests',labelNames:['method','route','status'],registers:[registry]});
   const starts=new WeakMap<object,bigint>();

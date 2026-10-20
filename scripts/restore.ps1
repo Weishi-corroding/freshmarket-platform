@@ -16,4 +16,5 @@ try {
 docker compose --env-file .env.docker exec -T redis redis-cli FLUSHDB | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'Database restored but Redis could not be cleared; API remains stopped.' }
 docker compose --env-file .env.docker start api
+if ($LASTEXITCODE -ne 0) { throw 'Database restored but API restart failed. Investigate before serving traffic.' }
 Write-Output 'Database restored, cache cleared and API restarted. Verify /api/health and a representative order.'

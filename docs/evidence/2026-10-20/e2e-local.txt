@@ -1,0 +1,20 @@
+
+> freshmarket-platform@1.0.0 test:e2e
+> playwright test --reporter=list,json
+
+
+Running 9 tests using 1 worker
+
+(node:36892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 e2e\shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details (3.5s)
+  ok 2 e2e\shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar (2.4s)
+  ok 3 e2e\shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow (1.7s)
+  ok 4 e2e\shopping.spec.ts:86:5 › member checkout, payment, staff fulfillment, receipt, review and settlement (4.6s)
+  ok 5 e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench (6.0s)
+  ok 6 e2e\shopping.spec.ts:107:5 › warehouse UI shows fulfillment and inventory but hides privileged sections (2.2s)
+  ok 7 e2e\shopping.spec.ts:114:5 › header delivery address selector switches regions and syncs the label (1.5s)
+  ok 8 e2e\shopping.spec.ts:127:5 › delivery time options mark only the selected slot with a check icon (2.5s)
+  ok 9 e2e\shopping.spec.ts:140:5 › modal inputs accept typing and partial refund can be submitted (3.0s)
+
+  9 passed (29.3s)

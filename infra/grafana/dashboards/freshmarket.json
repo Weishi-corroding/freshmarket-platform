@@ -2,11 +2,13 @@
   "uid":"freshmarket","title":"FreshMarket · 业务服务监控","schemaVersion":39,"version":1,
   "refresh":"15s","time":{"from":"now-30m","to":"now"},
   "panels":[
-    {"id":1,"title":"API健康","type":"stat","gridPos":{"x":0,"y":0,"w":6,"h":5},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"up{job=\"freshmarket-api\"}","refId":"A"}]},
+    {"id":1,"title":"指标采集可达","type":"stat","gridPos":{"x":0,"y":0,"w":6,"h":5},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"up{job=\"freshmarket-api\"}","refId":"A"}]},
     {"id":2,"title":"QPS","type":"timeseries","gridPos":{"x":6,"y":0,"w":18,"h":8},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"sum(rate(fresh_http_requests_total[1m]))","refId":"A"}]},
     {"id":3,"title":"p95响应时间（秒）","type":"timeseries","gridPos":{"x":0,"y":8,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"histogram_quantile(0.95, sum(rate(fresh_http_duration_seconds_bucket[5m])) by (le))","refId":"A"}]},
     {"id":4,"title":"5xx错误率","type":"timeseries","gridPos":{"x":12,"y":8,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"sum(rate(fresh_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(fresh_http_requests_total[5m])),0.01)","refId":"A"}]},
     {"id":5,"title":"进程RSS内存（字节）","type":"timeseries","gridPos":{"x":0,"y":16,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"process_resident_memory_bytes","refId":"A"}]},
-    {"id":6,"title":"事件循环延迟（秒）","type":"timeseries","gridPos":{"x":12,"y":16,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"nodejs_eventloop_lag_seconds","refId":"A"}]}
+    {"id":6,"title":"事件循环延迟（秒）","type":"timeseries","gridPos":{"x":12,"y":16,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"nodejs_eventloop_lag_seconds","refId":"A"}]},
+    {"id":7,"title":"依赖就绪","type":"stat","gridPos":{"x":0,"y":24,"w":12,"h":5},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"fresh_dependency_up","legendFormat":"{{dependency}}","refId":"A"}]},
+    {"id":8,"title":"最旧未发送事件（秒）","type":"timeseries","gridPos":{"x":12,"y":24,"w":12,"h":5},"datasource":{"type":"prometheus","uid":"fresh-prometheus"},"targets":[{"expr":"fresh_outbox_oldest_pending_seconds","refId":"A"}]}
   ]
 }

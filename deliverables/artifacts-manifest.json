@@ -1,95 +1,36 @@
 {
-  "timestamp": "2026-10-06T13:09:19.860029+00:00",
+  "date": "2026-10-20",
+  "scope": "Current three Word/PDF pairs only; older video/package manifests remain historical",
   "artifacts": [
     {
-      "file": "documents-manifest.json",
-      "bytes": 415,
-      "sha256": "1df2ce8c7cd8c261bda627dceb8da31e459dfca8f406e45775f9f6ec9167713d"
-    },
-    {
-      "file": "video-manifest.json",
-      "bytes": 6917,
-      "sha256": "dbc74fe9cc1ebdeae94f6035a5cb875a9ea14b3b061fcb73fd5808e211a3c8f5"
-    },
-    {
-      "file": "交付清单.md",
-      "bytes": 2552,
-      "sha256": "472201c83c7eb8e218536cce03339bf41245f06c123eb645370dd519915e20f3"
-    },
-    {
-      "file": "鲜境_AI过程与决策记录.docx",
-      "bytes": 42643,
-      "sha256": "043b2f64b1e72d4ce2cc36152bbe832ccc49a71fe7fb2514e81fdb312841fa3d"
-    },
-    {
-      "file": "鲜境_AI过程与决策记录.pdf",
-      "bytes": 453938,
-      "sha256": "26db4fbdf154efdf463d90374460aebd750f651d9b8601488935c3e101126082"
-    },
-    {
-      "file": "鲜境_实验报告.docx",
-      "bytes": 2180326,
-      "sha256": "28dedf11832ef68ad97e8956155f31413d2f2028561229fae06b439543f1a006"
-    },
-    {
-      "file": "鲜境_实验报告.pdf",
-      "bytes": 833565,
-      "sha256": "e92af48373a3f8233fedb85df8bc66a56c78ccf646af3f149149cadb8c63435b"
-    },
-    {
       "file": "鲜境_测试报告.docx",
-      "bytes": 3641460,
-      "sha256": "3ddc68e8520c58e74c1c435b3f70d0e1bb941fd53b0a288b7967b274c74c5389"
+      "bytes": 2996624,
+      "sha256": "9926f5b34f68ef11dd124cc62ff624888b52f565f9ee87181ba0c7f665400826"
     },
     {
       "file": "鲜境_测试报告.pdf",
-      "bytes": 1361126,
-      "sha256": "25978855d2abf07beb4c750024d41185d28c1971c26eeb900eac19c3122df0f2"
-    },
-    {
-      "file": "鲜境_系统演示.webm",
-      "bytes": 18080919,
-      "sha256": "85001fc155e71ffa77080b3df5c415404bcfc9bb8e3e65d4fca16b789bb9bb37"
+      "bytes": 2604791,
+      "sha256": "81f6df0155a708dc1079ecbaf30cc6deb51870af0ac6c78ab3c246ad93717363"
     },
     {
       "file": "鲜境_设计文档.docx",
-      "bytes": 228941,
-      "sha256": "c2a05755a5e5c6bc1ad168009b11ceafe90e63d31fe5fc6b5ce0a48cf6a1576e"
+      "bytes": 1964614,
+      "sha256": "205924dc905ec5853e16b1632b4247735a51737ba5dad9ce2fe72efcfec7c31e"
     },
     {
       "file": "鲜境_设计文档.pdf",
-      "bytes": 662946,
-      "sha256": "a960dfd8810f6140fff32de0624a9c93dbfdce368a2ff7e9f1b7b9cb328a1b64"
-    },
-    {
-      "file": "鲜境_部署运维手册.docx",
-      "bytes": 41100,
-      "sha256": "11d9b5a2768ff6eb59303d8e9b0e33a13ddf77c86371ee9216250904662b73ab"
-    },
-    {
-      "file": "鲜境_部署运维手册.pdf",
-      "bytes": 423881,
-      "sha256": "622a39900129b4821098a7544c2ca0f52b3dc50a3e2131821aa9afca3a404ec8"
+      "bytes": 3799025,
+      "sha256": "f402cbb530b5c7ea119e3ab62ec29286c0e9d6379faec696e3e063679f89dede"
     },
     {
       "file": "鲜境_需求文档.docx",
-      "bytes": 428104,
-      "sha256": "9061d126ce8ab87ae800f1e2fd595059ddfc2408dece70bd2d5664640021c6a7"
+      "bytes": 1308753,
+      "sha256": "6c7cfce3c20459a11689e9d8f61ff56802f650d799cb8591bd909f61a6040874"
     },
     {
       "file": "鲜境_需求文档.pdf",
-      "bytes": 811258,
-      "sha256": "9b2676a619c6fe6a170141a6033f1d6dad92cca840a1cb1d1595d046df52901d"
-    },
-    {
-      "file": "鲜境_项目汇报.pdf",
-      "bytes": 1033770,
-      "sha256": "35ba61a86de040ed1feb3970b2ad3988759dc1ed34bd5076a2906a12c86431cf"
-    },
-    {
-      "file": "鲜境_项目汇报.pptx",
-      "bytes": 2655553,
-      "sha256": "4e2fc1d1af80ab00b3b5308b6c9099560a90d96ac678f945fa7e2a14ab35b574"
+      "bytes": 2616014,
+      "sha256": "cb88d66cae31fe31d6de84a5d3fcd702a975284760c74b713c72f86a69d48d25"
     }
   ]
 }
