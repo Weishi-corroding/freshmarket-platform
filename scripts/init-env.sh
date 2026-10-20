@@ -10,6 +10,8 @@ secret() { od -vAn -N24 -tx1 /dev/urandom | tr -d ' \n'; }
   echo "MQ_PASSWORD=$(secret)"
   echo "GRAFANA_PASSWORD=$(secret)"
   echo "DEMO_PASSWORD=FreshDemo$(secret)"
+  # 每份部署使用独立的 Compose 项目名，避免同机多份检出共用数据卷
+  echo "COMPOSE_PROJECT_NAME=freshmarket-$(secret | cut -c1-8)"
   echo 'CORS_ORIGIN=http://localhost:8080'
   echo 'WEB_BIND=127.0.0.1'
   echo 'APP_VERSION=local'

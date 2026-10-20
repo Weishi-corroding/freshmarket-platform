@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-10-19T02:26:42.576Z",
+  "scope": "Local catalog HTTP endpoint, single process, SQLite, no Redis; indicative only, not production capacity",
+  "node": "v24.22.0",
+  "platform": "linux",
+  "origin": "http://127.0.0.1:3001",
+  "concurrency": 10,
+  "requests": 200,
+  "seconds": 0.171804914,
+  "qps": 1164.11,
+  "meanMs": 7.21,
+  "p50Ms": 5.46,
+  "p95Ms": 17.55,
+  "p99Ms": 21.11,
+  "errors": 0,
+  "errorRate": 0,
+  "statuses": {
+    "200": 200
+  }
+}

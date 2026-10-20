@@ -17,13 +17,15 @@ function hidePhone(item:Record<string,any>) {item.address.phone=maskPhone(item.a
 export async function adminRoutes(app:FastifyInstance,ctx:Context) {
   const options=(cap:string,schema:any={})=>({preHandler:ctx.permit(cap),schema:{tags:['管理后台'],security:[{bearerAuth:[]}],...schema}});
   app.get('/api/admin/dashboard',options('dashboard'),async req=>{
-    const totals=await ctx.db.one("SELECT COUNT(*) AS orders, COALESCE(SUM(CASE WHEN status IN ('paid','picking','delivering','completed') THEN total ELSE 0 END),0) AS revenue, SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END) AS pending_fulfillment FROM orders WHERE deleted_at IS NULL");
+    const totals=await ctx.db.one("SELECT COUNT(*) AS orders, COALESCE(SUM(CASE WHEN status IN ('paid','picking','delivering','completed') THEN total ELSE 0 END),0) AS revenue, COALESCE(SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END),0) AS pending_fulfillment FROM orders WHERE deleted_at IS NULL");
+    // PostgreSQL 的 COUNT/SUM 返回 bigint/numeric 字符串，统一转为数字，保证两种数据库接口一致
+    const num=(row:Record<string,any>)=>Object.fromEntries(Object.entries(row).map(([k,v])=>[k,k==='status'?v:Number(v)]));
     const members=Number((await ctx.db.one("SELECT COUNT(*) AS count FROM users WHERE role='member' AND deleted_at IS NULL"))!.count);
     const refunds=Number((await ctx.db.one("SELECT COUNT(*) AS count FROM refunds WHERE status='pending'"))!.count);
     const lowStock=await ctx.db.all('SELECT id,name,stock,image FROM products WHERE stock<20 AND active=1 AND deleted_at IS NULL ORDER BY stock LIMIT 8');
     const statuses=await ctx.db.all('SELECT status,COUNT(*) AS count FROM orders WHERE deleted_at IS NULL GROUP BY status');
     const daily=[];for(let i=6;i>=0;i--){const day=new Date();day.setHours(0,0,0,0);day.setDate(day.getDate()-i);const from=day.getTime();const row=await ctx.db.one("SELECT COUNT(*) AS orders,COALESCE(SUM(amount),0) AS amount FROM payments WHERE created_at>=? AND created_at<? AND status='success'",[from,from+86400000]);daily.push({label:`${day.getMonth()+1}/${day.getDate()}`,orders:Number(row!.orders),amount:Number(row!.amount)});}
-    return result(req,{...totals,members,refunds,lowStock,statuses,daily,outbox:await ctx.db.one("SELECT COUNT(*) AS pending FROM outbox WHERE status!='sent'")});
+    return result(req,{...num(totals!),members,refunds,lowStock,statuses:statuses.map(num),daily,outbox:num((await ctx.db.one("SELECT COUNT(*) AS pending FROM outbox WHERE status!='sent'"))!)});
   });
   app.get<{Querystring:Record<string,any>}>('/api/admin/products',options('catalog.read',{querystring:{...catalogQuery,properties:{...catalogQuery.properties,active:{type:'string',enum:['','0','1']}}}}),async req=>result(req,await ctx.catalog.list(req.query,true)));
   app.get<{Params:{id:string}}>('/api/admin/products/:id',options('catalog.read',{params:idParams}),async req=>{

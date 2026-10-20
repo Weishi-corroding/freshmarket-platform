@@ -61,7 +61,7 @@ function AuthModal({onClose,onComplete}:{onClose:()=>void;onComplete:(v:{user:Us
     <label>密码<input type="password" required minLength={register?10:1} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)} placeholder={register?'至少10位，包含字母和数字':'输入密码'} autoComplete={register?'new-password':'current-password'}/></label>
     {error&&<p className="form-error" role="alert">{error}</p>}<button className="button full" disabled={busy}>{busy?'请稍候…':register?'注册并登录':'登录'}</button></form>
     <p className="auth-switch">{register?'已有账号？':'还没有账号？'}<button className="text-button" onClick={()=>{setRegister(!register);setError('');}}>{register?'去登录':'立即注册'}</button></p>
-    {!register&&import.meta.env.VITE_DEMO!=='false'&&<div className="demo-accounts"><span>实验演示账号（点击填入）</span><div><button onClick={()=>{setUsername('member');setPassword(import.meta.env.VITE_DEMO_PASSWORD || 'Fresh@123456');}}>会员</button></div><small>仅用于实验演示</small></div>}
+    {!register&&import.meta.env.VITE_DEMO!=='false'&&<div className="demo-accounts"><span>实验演示账号（点击填入）</span><div><button onClick={()=>{setUsername('member');setPassword(import.meta.env.DEV?'Fresh@123456':'');}}>会员</button></div><small>{import.meta.env.DEV?'仅用于实验演示':'仅填入账号，密码见部署环境的 DEMO_PASSWORD'}</small></div>}
     <p className="auth-switch">员工办公请前往 <Link className="text-button" to="/admin/login" onClick={onClose}>员工登录</Link></p>
   </Modal>;
 }

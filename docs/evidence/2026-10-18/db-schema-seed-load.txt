@@ -1,0 +1,10 @@
+## 2026-10-19T02:29:50Z schema.sql + seed.sql x2 on PostgreSQL 17.11 (ON_ERROR_STOP)
+load exit 0
+categories|6
+products|48
+users|6
+addresses|1
+16
+29
+## same on SQLite (python sqlite3 3.45.1)
+{'categories': 6, 'products': 48, 'users': 6, 'addresses': 1}

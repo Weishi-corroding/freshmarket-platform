@@ -1,0 +1,10 @@
+## 2026-10-19T02:14:17Z case A: NODE_ENV=production, weak JWT_SECRET
+Production JWT_SECRET must be a unique secret with at least 32 characters
+CONFIG_INVALID'
+exit 1
+## case B: strong secret, no DATABASE_URL
+Production requires PostgreSQL DATABASE_URL
+exit 1
+## case C: strong secret, DATABASE_URL set, SEED_DEMO default, DEMO_PASSWORD=Fresh@123456 (default)
+Production demo seeding requires a unique DEMO_PASSWORD of at least 12 characters
+exit 1

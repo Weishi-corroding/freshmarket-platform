@@ -1,0 +1,14 @@
+## 2026-10-19T02:29:48Z upgrade from 06ceed2 schema -> current migrate()+seed()
+sqlite {"legacyProduct":{"stock":3,"active":0,"views":0,"deleted_at":null},"legacyUser":{"active":1,"session_version":0,"deleted_at":null},"products":48,"refundItemsTable":true,"staffSeeded":0}
+sqlite second migrate() idempotent: ok
+postgres {"legacyProduct":{"stock":3,"active":0,"views":0,"deleted_at":null},"legacyUser":{"active":1,"session_version":0,"deleted_at":null},"products":48,"refundItemsTable":true,"staffSeeded":0}
+postgres second migrate() idempotent: ok
+exit 0
+## seed.sql vs seed.ts drift
+seed.sql matches seed.ts for all 48 products and 6 categories
+exit 0
+## soft-deleted username reuse
+register 200 10f695f1-d8e9-4866-b5bd-0448494882c7
+delete 200 0
+re-register same username 409 {"code":"USERNAME_EXISTS","message":"账号已存在","data":null,"traceId":"0b7d223c-0e57-4722-adc7-b89d939593ad"}
+create staff with deleted username 409 {"code":"USERNAME_EXISTS","message":"账号已存在","data":null,"traceId":"568102d1-e5a2-4119-921e-2c3251768b5e"}

@@ -27,7 +27,9 @@ export async function createDatabase(url?: string, path = '.runtime/freshmarket.
   const schema = readFileSync(new URL('../../../database/schema.sql', import.meta.url), 'utf8');
   const additions:Record<string,Record<string,string>>={
     users:{active:'INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1))',session_version:'INTEGER NOT NULL DEFAULT 0',deleted_at:'BIGINT'},
-    products:{views:'INTEGER NOT NULL DEFAULT 0',deleted_at:'BIGINT'},orders:{deleted_at:'BIGINT'}
+    products:{views:'INTEGER NOT NULL DEFAULT 0',deleted_at:'BIGINT'},
+    orders:{deleted_at:'BIGINT',discount:'INTEGER NOT NULL DEFAULT 0',coupon_id:'TEXT',seckill_id:'TEXT'},
+    order_items:{discount:'INTEGER NOT NULL DEFAULT 0'},outbox:{trace_context:"TEXT NOT NULL DEFAULT ''"}
   };
   if (url) {
     const pool = new Pool({ connectionString: url, max: 15, connectionTimeoutMillis: 5000, idleTimeoutMillis: 30000 });
@@ -35,9 +37,14 @@ export async function createDatabase(url?: string, path = '.runtime/freshmarket.
     const query = postgresQuery(pool);
     return { ...query, dialect: 'postgres',
       async migrate() {
-        await pool.query(schema);
-        for(const [table,columns] of Object.entries(additions))for(const [name,type] of Object.entries(columns))
-          await pool.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${name} ${type}`);
+        // 多副本同时启动时以会话级咨询锁串行化建表/补列，避免并发 DDL 冲突
+        const client=await pool.connect();
+        try {
+          await client.query('SELECT pg_advisory_lock(7303052026)');
+          await client.query(schema);
+          for(const [table,columns] of Object.entries(additions))for(const [name,type] of Object.entries(columns))
+            await client.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${name} ${type}`);
+        } finally { await client.query('SELECT pg_advisory_unlock(7303052026)').catch(()=>{});client.release(); }
       },
       async transaction<T>(fn: (tx: Query) => Promise<T>) {
         const client = await pool.connect();

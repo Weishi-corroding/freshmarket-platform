@@ -9,6 +9,7 @@ $configuration = @(
   'MQ_PASSWORD=' + (New-Secret)
   'GRAFANA_PASSWORD=' + (New-Secret)
   'DEMO_PASSWORD=FreshDemo' + (New-Secret).Substring(0,16)
+  'COMPOSE_PROJECT_NAME=freshmarket-' + (New-Secret).Substring(0,8)
   'CORS_ORIGIN=http://localhost:8080'
   'WEB_BIND=127.0.0.1'
   'APP_VERSION=local'

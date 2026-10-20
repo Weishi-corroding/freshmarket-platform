@@ -1,0 +1,23 @@
+## 2026-10-19T02:12:59Z 12 failed member logins from host via gateway (wrong password)
+1 "code":"INVALID_CREDENTIALS" HTTP401
+2 "code":"INVALID_CREDENTIALS" HTTP401
+3 "code":"INVALID_CREDENTIALS" HTTP401
+4 "code":"INVALID_CREDENTIALS" HTTP401
+5 "code":"INVALID_CREDENTIALS" HTTP401
+6 "code":"INVALID_CREDENTIALS" HTTP401
+7 "code":"INVALID_CREDENTIALS" HTTP401
+8 "code":"INVALID_CREDENTIALS" HTTP401
+9 "code":"INVALID_CREDENTIALS" HTTP401
+10 "code":"INVALID_CREDENTIALS" HTTP401
+11 "code":"RATE_LIMITED" HTTP429
+12 <title>429 Too Many Requests</title> HTTP429
+## one login from a different client (api container -> web gateway, distinct source IP)
+HTTP 429 {"code":"RATE_LIMITED","message":"操作太频繁，请稍后重试","data":null,"traceId":"319851eb-b36f-4cb7-90dd-c512634690cd"}
+## one ordinary GET /api/products from the other client
+HTTP 200
+## remoteAddress seen by API for the login route
+     12 "remoteAddress":"172.20.0.8"
+## container IPs
+web 172.20.0.8
+api 172.20.0.7
+prometheus 172.20.0.6

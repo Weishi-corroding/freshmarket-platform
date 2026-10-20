@@ -1,0 +1,28 @@
+## 2026-10-19T02:14:07Z Prometheus targets
+freshmarket-api http://api:3001/api/metrics up 
+## Prometheus rules
+freshmarket FreshmarketApiDown ok inactive
+freshmarket FreshmarketHighErrorRate ok inactive
+freshmarket FreshmarketSlowRequests ok inactive
+## Prometheus up query
+[('freshmarket-api', '1')]
+## Alertmanager configured
+{'activeAlertmanagers': [], 'droppedAlertmanagers': []}
+## Grafana health/datasource/dashboards
+{
+  "database": "ok",
+  "version": "13.2.3",
+  "commit": "90ffed056f0884267356c12a0eeb72a022af53f1"
+}
+Prometheus fresh-prometheus prometheus http://prometheus:9090
+{"details":{"application":"Prometheus","features":{"rulerApiEnabled":false}},"message":"Successfully queried the Prometheus API.","status":"OK"}
+FreshMarket · 业务服务监控 FreshMarket freshmarket
+## Grafana anonymous access
+401
+## RabbitMQ
+name	durable	messages	consumers	arguments
+fresh.notifications	true	0	1	[{"x-dead-letter-exchange","fresh.dead"},{"x-queue-type","classic"}]
+fresh.dead	true	0	0	[{"x-queue-type","classic"}]
+fresh.dead	fanout	true
+fresh.events	topic	true
+## Outbox status

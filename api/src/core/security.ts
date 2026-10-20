@@ -5,9 +5,9 @@ export const staffRoles = ['operator','warehouse','support','finance','admin'] a
 export type AccountType = 'member' | 'staff';
 export const accountType = (role: string): AccountType | undefined => role === 'member' ? 'member' : staffRoles.includes(role as typeof staffRoles[number]) ? 'staff' : undefined;
 export const capabilities: Record<Role, string[]> = {
-  member: [], operator: ['dashboard','catalog.read','products','orders'], warehouse: ['dashboard','catalog.read','stock','orders','fulfillment'],
+  member: [], operator: ['dashboard','catalog.read','products','orders','promotions'], warehouse: ['dashboard','catalog.read','stock','orders','fulfillment'],
   support: ['dashboard','orders','refunds'], finance: ['dashboard','settlements'],
-  admin: ['dashboard','catalog.read','products','products.delete','stock','orders','orders.manage','orders.delete','fulfillment','refunds','settlements','users','users.delete','audit']
+  admin: ['dashboard','catalog.read','products','products.delete','promotions','stock','orders','orders.manage','orders.delete','fulfillment','refunds','settlements','users','users.delete','audit']
 };
 export function hashPassword(password: string) {
   const salt = randomBytes(16).toString('hex');

@@ -1,0 +1,40 @@
+## healthz
+ok [200]
+## /api/health
+{"code":0,"message":"success","data":{"status":"ok","database":"postgres","cache":"connected","queue":"connected","time":"2026-10-19T02:10:39.679Z"},"traceId":"a620706c-86fd-4ce1-b267-56d9d18264d8"}
+## /api/metrics via gateway
+404
+## /api/docs/ via gateway
+200
+## /api/openapi.json via gateway
+200
+## SPA deep link /admin/orders
+200
+## headers /
+Server: nginx
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+X-Frame-Options: DENY
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'
+## headers /api/health
+Server: nginx
+Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+x-trace-id: dcfe29d9-39b0-4768-bd92-edc7eb97699e
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+X-Frame-Options: DENY
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'
+## api user
+uid=1000(node) gid=1000(node) groups=1000(node)
+## published ports
+api [3001/tcp -> :0]
+grafana [3000/tcp -> 127.0.0.1:3000]
+postgres [5432/tcp -> :0]
+prometheus [9090/tcp -> 127.0.0.1:9090]
+rabbitmq [4369/tcp -> :0 5671/tcp -> :0 5672/tcp -> :0 15671/tcp -> :0 15672/tcp -> 127.0.0.1:15672 15691/tcp -> :0 15692/tcp -> :0 25672/tcp -> :0]
+redis [6379/tcp -> :0]
+web [80/tcp -> 127.0.0.1:18080]

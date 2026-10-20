@@ -1,0 +1,20 @@
+2026-10-19T02:27:04Z
+
+Running 9 tests using 1 worker
+
+  ✓  1 e2e/shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details (1.0s)
+  ✓  2 e2e/shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar (736ms)
+  ✓  3 e2e/shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow (543ms)
+  ✓  4 e2e/shopping.spec.ts:86:5 › member checkout, payment, staff fulfillment, receipt, review and settlement (2.5s)
+  ✓  5 e2e/shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench (2.7s)
+  ✓  6 e2e/shopping.spec.ts:107:5 › warehouse UI shows fulfillment and inventory but hides privileged sections (696ms)
+  ✓  7 e2e/shopping.spec.ts:114:5 › header delivery address selector switches regions and syncs the label (562ms)
+  ✓  8 e2e/shopping.spec.ts:127:5 › delivery time options mark only the selected slot with a check icon (1.2s)
+  ✓  9 e2e/shopping.spec.ts:140:5 › modal inputs accept typing and partial refund can be submitted (1.8s)
+
+  9 passed (12.6s)
+npm notice
+npm notice New major version of npm available! 11.19.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

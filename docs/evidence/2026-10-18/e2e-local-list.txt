@@ -1,0 +1,16 @@
+2026-10-19T02:24:56Z
+Version 1.63.0
+
+Running 9 tests using 1 worker
+
+  ✓  1 e2e/shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details (1.6s)
+  ✓  2 e2e/shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar (1.5s)
+  ✓  3 e2e/shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow (1.1s)
+  ✓  4 e2e/shopping.spec.ts:86:5 › member checkout, payment, staff fulfillment, receipt, review and settlement (6.3s)
+  ✓  5 e2e/shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench (6.7s)
+  ✓  6 e2e/shopping.spec.ts:107:5 › warehouse UI shows fulfillment and inventory but hides privileged sections (1.9s)
+  ✓  7 e2e/shopping.spec.ts:114:5 › header delivery address selector switches regions and syncs the label (1.1s)
+  ✓  8 e2e/shopping.spec.ts:127:5 › delivery time options mark only the selected slot with a check icon (2.8s)
+  ✓  9 e2e/shopping.spec.ts:140:5 › modal inputs accept typing and partial refund can be submitted (4.4s)
+
+  9 passed (28.5s)

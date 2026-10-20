@@ -1,0 +1,221 @@
+2026-10-19T02:13:12Z
+ Container freshmarket-postgres-1 Running 
+ Image freshmarket-tests Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 503B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from test.Dockerfile
+#2 transferring dockerfile: 269B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:24-alpine
+#3 DONE 2.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 228B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 1.60kB done
+#5 DONE 0.0s
+
+#6 [1/8] FROM docker.io/library/node:24-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f
+#6 resolve docker.io/library/node:24-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f 0.0s done
+#6 DONE 0.0s
+
+#7 [4/8] COPY api/package.json ./api/package.json
+#7 CACHED
+
+#8 [6/8] RUN npm ci
+#8 CACHED
+
+#9 [3/8] COPY package.json package-lock.json ./
+#9 CACHED
+
+#10 [5/8] COPY web/package.json ./web/package.json
+#10 CACHED
+
+#11 [7/8] COPY api ./api
+#11 CACHED
+
+#12 [2/8] WORKDIR /app
+#12 CACHED
+
+#13 [8/8] COPY database ./database
+#13 CACHED
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 8.8s done
+#14 exporting manifest sha256:caa10f41aba586782c87ade1a6a13711c30a39edeb14f2a0b138e3d4ce314724 0.0s done
+#14 exporting config sha256:43af387fc2d9ff706facafdaa0a11204db89d4f1ecea0a503b2920bbb1e56244 0.0s done
+#14 exporting attestation manifest sha256:3643309391d3a5be5908c246987d714bc0976655256fa9d97e41202344515688
+#14 exporting attestation manifest sha256:3643309391d3a5be5908c246987d714bc0976655256fa9d97e41202344515688 0.0s done
+#14 exporting manifest list sha256:a07abde3563c472abd97a58bc853cfdea2b3e88e42e57fcffc16044fbf87082e 0.0s done
+#14 naming to docker.io/library/freshmarket-tests:latest done
+#14 unpacking to docker.io/library/freshmarket-tests:latest
+#14 unpacking to docker.io/library/freshmarket-tests:latest 2.3s done
+#14 DONE 11.3s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s
+ Image freshmarket-tests Built 
+ Container freshmarket-postgres-1 Waiting 
+ Container freshmarket-postgres-1 Healthy 
+ Container freshmarket-tests-run-254b0e34c8ac Creating 
+ Container freshmarket-tests-run-254b0e34c8ac Created 
+
+> freshmarket-platform@1.0.0 test
+> npm run test -w api
+
+
+> @freshmarket/api@1.0.0 test
+> tsx --test --experimental-test-coverage test/*.test.ts
+
+node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/app/web/src/search-highlight.js' imported from /app/api/test/search-highlight.test.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:272:11)
+    at moduleResolve (node:internal/modules/esm/resolve:879:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at resolveBaseSync (file:///app/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:11092)
+    at resolveDirectorySync (file:///app/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:12398)
+    at resolveTsPathsSync (file:///app/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:13605)
+    at resolve (file:///app/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:16832) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///app/web/src/search-highlight.js'
+}
+
+Node.js v24.22.0
+✖ test/search-highlight.test.ts (384.259223ms)
+✔ password hashes are salted and verified using scrypt (797.378789ms)
+✔ login, JWT identity and invalid credentials (407.135455ms)
+✔ registration rejects role injection and creates members only (371.714526ms)
+✔ RBAC rejects anonymous, members and staff outside their role (279.039685ms)
+✔ member and staff logins issue separate identities and reject the opposite portal (813.933325ms)
+✔ all employee roles are blocked from shopping even when historical carts and orders exist (426.961866ms)
+✔ account lists and employee provisioning keep memberships separate (443.987062ms)
+✔ legacy tokens and stale account types cannot cross the member and staff boundary (273.453824ms)
+✔ administrators can create, search, inspect, edit and delete both account types (479.466869ms)
+✔ account CRUD enforces roles, type boundaries, validation and self protection (307.404425ms)
+✔ password resets, disable/enable and deletion invalidate old sessions for both portals (779.09047ms)
+✔ concurrent administrator demotions preserve one active administrator (330.035315ms)
+✔ member deletion blocks unfinished business and preserves completed order history (329.821504ms)
+✔ only administrators delete goods, while history, refunds and seed tombstones survive (349.800257ms)
+✔ catalog administration supports create, detail, edit and visibility filters (295.938833ms)
+✖ administrators edit delivery data and cancel/delete only unpaid cancelled orders (331.129284ms)
+✔ paid, fulfilled and financial records cannot be deleted or bypass business transitions (323.710593ms)
+✔ catalog validates sort, bounds pagination, and parameterizes search (256.908171ms)
+✔ catalog seeding fills existing shops without changing inventory, accounts or orders (338.294473ms)
+✔ catalog search tolerates a single name typo and requires every keyword (269.668236ms)
+✔ catalog search rejects insufficient overlaps and literal SQL wildcards (288.106187ms)
+✔ two-character searches use the same overlap algorithm for any product name (283.556597ms)
+✔ weak overlap results are capped before pagination without capping accurate matches (263.725014ms)
+✔ search relevance precedes recommendation while explicit price and sales sorts still apply (258.042816ms)
+✔ search filters and ranks all matches before pagination (290.713612ms)
+✔ fuzzy search respects category and visibility and also works in the workbench (326.759796ms)
+✔ default sort ranks by weighted recommendation instead of upload time (272.734954ms)
+✔ cart maintains quantities and rejects stock overflow (294.002859ms)
+✔ checkout snapshots prices/address, applies fee and reserves inventory (289.976527ms)
+✔ checkout applies free shipping at 99 yuan and above (256.192976ms)
+✔ eight simultaneous retries with same idempotency key create one order (326.683828ms)
+✔ idempotency key cannot be reused with another payload (294.320092ms)
+✔ failed multi-product checkout rolls back all reservations and preserves cart (263.489129ms)
+✔ competing members cannot oversell the final three units (335.635489ms)
+✔ duplicate sandbox payments never double charge or inflate sales (319.095473ms)
+✔ pay-versus-cancel race has exactly one winning transition (303.023877ms)
+✔ cancel is idempotent and stock is returned once (288.497189ms)
+✔ expiry rejects payment and worker returns stock only once (268.499171ms)
+✔ member cannot read, pay, cancel or refund another member order (308.735784ms)
+✔ fulfillment follows a strict state machine and receive checks ownership (294.696282ms)
+✔ pending refund blocks fulfillment and approval restocks unshipped goods once (276.420841ms)
+✔ fresh food already delivered is never restocked after refund (307.486469ms)
+✔ partial refund restocks only the selected items and keeps the order active (332.738715ms)
+✔ partial refund amount is bounded and nets the settlement (304.25001ms)
+✔ reviews require received items and prevent duplicate reviews (292.285682ms)
+✔ settlements exclude pending refunds and never settle twice (340.091865ms)
+✔ transactional outbox retries failed processing and deduplicates notifications (278.794576ms)
+✔ role revocation takes effect even for previously signed JWT (255.407688ms)
+✔ stock adjustments cannot make inventory negative and produce an audit trail (265.272591ms)
+✔ address validation, ownership and default selection (317.409478ms)
+✔ dashboard, OpenAPI, health, metrics and masked staff order responses (292.620888ms)
+✔ login rate limit blocks brute force attempts with a uniform error (637.818611ms)
+ℹ tests 53
+ℹ suites 0
+ℹ pass 51
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19640.887214
+ℹ start of coverage report
+ℹ -------------------------------------------------------------------
+ℹ file             | line % | branch % | funcs % | uncovered lines
+ℹ -------------------------------------------------------------------
+ℹ src              |        |          |         | 
+ℹ  app.ts          |  95.00 |    73.21 |  100.00 | 29-32
+ℹ  core            |        |          |         | 
+ℹ   database.ts    |  63.75 |    94.12 |   47.62 | 50-78
+ℹ   errors.ts      | 100.00 |   100.00 |  100.00 | 
+ℹ   http.ts        | 100.00 |    66.67 |  100.00 | 
+ℹ   runtime.ts     |  61.63 |    45.95 |   63.16 | 15-40 66-67 74-78
+ℹ   security.ts    | 100.00 |    72.73 |  100.00 | 
+ℹ  modules         |        |          |         | 
+ℹ   accounts       |        |          |         | 
+ℹ    controller.ts | 100.00 |   100.00 |   85.71 | 
+ℹ    service.ts    |  97.83 |    86.52 |  100.00 | 70-72
+ℹ   admin          |        |          |         | 
+ℹ    controller.ts | 100.00 |    92.65 |  100.00 | 
+ℹ   catalog        |        |          |         | 
+ℹ    controller.ts | 100.00 |   100.00 |   75.00 | 
+ℹ    search.ts     | 100.00 |    96.30 |  100.00 | 
+ℹ    seed.ts       | 100.00 |   100.00 |  100.00 | 
+ℹ    service.ts    | 100.00 |    86.89 |  100.00 | 
+ℹ   orders         |        |          |         | 
+ℹ    controller.ts | 100.00 |    86.67 |   90.00 | 
+ℹ    repository.ts | 100.00 |   100.00 |  100.00 | 
+ℹ    service.ts    | 100.00 |    95.50 |  100.00 | 
+ℹ -------------------------------------------------------------------
+ℹ all files        |  93.20 |    86.98 |   89.72 | 
+ℹ -------------------------------------------------------------------
+ℹ end of coverage report
+
+✖ failing tests:
+
+test at test/search-highlight.test.ts:1:1
+✖ test/search-highlight.test.ts (384.259223ms)
+  'test failed'
+
+test at test/system.test.ts:246:1
+✖ administrators edit delivery data and cancel/delete only unpaid cancelled orders (331.129284ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== 0
+  
+      at TestContext.<anonymous> (/app/api/test/system.test.ts:263:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /app/api
+npm error workspace @freshmarket/api@1.0.0
+npm error location /app/api
+npm error command failed
+npm error command sh -c tsx --test --experimental-test-coverage test/*.test.ts
+
+exit 1
+0

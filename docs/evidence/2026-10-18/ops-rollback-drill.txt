@@ -1,0 +1,31 @@
+## 2026-10-19T02:15:54Z tag current images as 1.0.0
+tagged
+## negative: rollback to missing 9.9.9
+   6 |  … TCODE -ne 0) { throw 'Previous API image is not available locally.' }
+     |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Previous API image is not available locally.
+exit 1
+## invalid version string
+rollback.ps1: Cannot validate argument on parameter 'Version'. The argument "bad;rm" does not match the "^[a-zA-Z0-9._-]+$" pattern. Supply an argument that matches "^[a-zA-Z0-9._-]+$" and try the command again.
+exit 1
+## rollback to 1.0.0
+ Container freshmarket-api-1 Recreate 
+ Container freshmarket-api-1 Recreated 
+ Container freshmarket-web-1 Recreate 
+ Container freshmarket-web-1 Recreated 
+ Container freshmarket-api-1 Starting 
+ Container freshmarket-api-1 Started 
+ Container freshmarket-api-1 Waiting 
+ Container freshmarket-api-1 Healthy 
+ Container freshmarket-web-1 Starting 
+ Container freshmarket-web-1 Started 
+Previous application images started. Database schema must remain backward compatible; use backup restore for incompatible changes.
+exit 0 duration 11.99s
+freshmarket-web-1 freshmarket-web:1.0.0 Up Less than a second (health: starting)
+freshmarket-api-1 freshmarket-api:1.0.0 Up 10 seconds (healthy)
+gateway /api/health 200
+## restore :local images for remaining tests
+ Container freshmarket-web-1 Starting 
+ Container freshmarket-web-1 Started 
+freshmarket-web-1 freshmarket-web:local Up 8 seconds (health: starting)
+freshmarket-api-1 freshmarket-api:local Up 18 seconds (healthy)

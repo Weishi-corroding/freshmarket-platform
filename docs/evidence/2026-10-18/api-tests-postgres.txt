@@ -1,0 +1,133 @@
+
+> freshmarket-platform@1.0.0 test
+> npm run test -w api
+
+
+> @freshmarket/api@1.0.0 test
+> tsx --test --experimental-test-coverage test/*.test.ts
+
+✔ search highlights actual shared characters without changing product text (2.370849ms)
+✔ highlighting preserves original glyphs under Unicode and case normalization (0.243504ms)
+✔ highlight search terms are literal text including regexp and HTML characters (0.22141ms)
+✔ password hashes are salted and verified using scrypt (646.008853ms)
+✔ login, JWT identity and invalid credentials (333.267003ms)
+✔ registration rejects role injection and creates members only (313.346988ms)
+✔ RBAC rejects anonymous, members and staff outside their role (251.780772ms)
+✔ member and staff logins issue separate identities and reject the opposite portal (693.873701ms)
+✔ all employee roles are blocked from shopping even when historical carts and orders exist (365.807234ms)
+✔ account lists and employee provisioning keep memberships separate (395.226054ms)
+✔ legacy tokens and stale account types cannot cross the member and staff boundary (236.861144ms)
+✔ administrators can create, search, inspect, edit and delete both account types (433.592116ms)
+✔ account CRUD enforces roles, type boundaries, validation and self protection (268.852188ms)
+✔ password resets, disable/enable and deletion invalidate old sessions for both portals (646.455664ms)
+✔ concurrent administrator demotions preserve one active administrator (277.875353ms)
+✔ member deletion blocks unfinished business and preserves completed order history (296.569845ms)
+✔ only administrators delete goods, while history, refunds and seed tombstones survive (349.901594ms)
+✔ catalog administration supports create, detail, edit and visibility filters (249.364239ms)
+✖ administrators edit delivery data and cancel/delete only unpaid cancelled orders (305.307013ms)
+✔ paid, fulfilled and financial records cannot be deleted or bypass business transitions (313.06ms)
+✔ catalog validates sort, bounds pagination, and parameterizes search (236.051909ms)
+✔ catalog seeding fills existing shops without changing inventory, accounts or orders (289.57864ms)
+✔ catalog search tolerates a single name typo and requires every keyword (262.150035ms)
+✔ catalog search rejects insufficient overlaps and literal SQL wildcards (252.133858ms)
+✔ two-character searches use the same overlap algorithm for any product name (236.519178ms)
+✔ weak overlap results are capped before pagination without capping accurate matches (261.437912ms)
+✔ search relevance precedes recommendation while explicit price and sales sorts still apply (239.437312ms)
+✔ search filters and ranks all matches before pagination (229.956262ms)
+✔ fuzzy search respects category and visibility and also works in the workbench (245.060619ms)
+✔ default sort ranks by weighted recommendation instead of upload time (229.933221ms)
+✔ cart maintains quantities and rejects stock overflow (239.715814ms)
+✔ checkout snapshots prices/address, applies fee and reserves inventory (245.645025ms)
+✔ checkout applies free shipping at 99 yuan and above (236.247324ms)
+✔ eight simultaneous retries with same idempotency key create one order (286.261787ms)
+✔ idempotency key cannot be reused with another payload (241.25229ms)
+✔ failed multi-product checkout rolls back all reservations and preserves cart (239.809545ms)
+✔ competing members cannot oversell the final three units (292.824687ms)
+✔ duplicate sandbox payments never double charge or inflate sales (283.270748ms)
+✔ pay-versus-cancel race has exactly one winning transition (249.566872ms)
+✔ cancel is idempotent and stock is returned once (246.109627ms)
+✔ expiry rejects payment and worker returns stock only once (248.501748ms)
+✔ member cannot read, pay, cancel or refund another member order (274.222ms)
+✔ fulfillment follows a strict state machine and receive checks ownership (270.406309ms)
+✔ pending refund blocks fulfillment and approval restocks unshipped goods once (270.355174ms)
+✔ fresh food already delivered is never restocked after refund (275.759767ms)
+✔ partial refund restocks only the selected items and keeps the order active (274.705485ms)
+✔ partial refund amount is bounded and nets the settlement (293.296784ms)
+✔ reviews require received items and prevent duplicate reviews (300.077804ms)
+✔ settlements exclude pending refunds and never settle twice (299.455899ms)
+✔ transactional outbox retries failed processing and deduplicates notifications (259.371389ms)
+✔ role revocation takes effect even for previously signed JWT (231.00481ms)
+✔ stock adjustments cannot make inventory negative and produce an audit trail (234.508655ms)
+✔ address validation, ownership and default selection (291.388083ms)
+✔ dashboard, OpenAPI, health, metrics and masked staff order responses (261.492104ms)
+✔ login rate limit blocks brute force attempts with a uniform error (533.905171ms)
+ℹ tests 55
+ℹ suites 0
+ℹ pass 54
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16794.315034
+ℹ start of coverage report
+ℹ -------------------------------------------------------------------------
+ℹ file                   | line % | branch % | funcs % | uncovered lines
+ℹ -------------------------------------------------------------------------
+ℹ src                    |        |          |         | 
+ℹ  app.ts                |  95.00 |    73.21 |  100.00 | 29-32
+ℹ  core                  |        |          |         | 
+ℹ   database.ts          |  63.75 |    94.12 |   47.62 | 50-78
+ℹ   errors.ts            | 100.00 |   100.00 |  100.00 | 
+ℹ   http.ts              | 100.00 |    66.67 |  100.00 | 
+ℹ   runtime.ts           |  61.63 |    45.95 |   63.16 | 15-40 66-67 74-78
+ℹ   security.ts          | 100.00 |    72.73 |  100.00 | 
+ℹ  modules               |        |          |         | 
+ℹ   accounts             |        |          |         | 
+ℹ    controller.ts       | 100.00 |   100.00 |   85.71 | 
+ℹ    service.ts          |  97.83 |    86.52 |  100.00 | 70-72
+ℹ   admin                |        |          |         | 
+ℹ    controller.ts       | 100.00 |    92.65 |  100.00 | 
+ℹ   catalog              |        |          |         | 
+ℹ    controller.ts       | 100.00 |   100.00 |   75.00 | 
+ℹ    search.ts           | 100.00 |    96.30 |  100.00 | 
+ℹ    seed.ts             | 100.00 |   100.00 |  100.00 | 
+ℹ    service.ts          | 100.00 |    86.89 |  100.00 | 
+ℹ   orders               |        |          |         | 
+ℹ    controller.ts       | 100.00 |    86.67 |   90.00 | 
+ℹ    repository.ts       | 100.00 |   100.00 |  100.00 | 
+ℹ    service.ts          | 100.00 |    95.50 |  100.00 | 
+ℹ ..                     |        |          |         | 
+ℹ  web                   |        |          |         | 
+ℹ   src                  |        |          |         | 
+ℹ    search-highlight.ts | 100.00 |   100.00 |  100.00 | 
+ℹ -------------------------------------------------------------------------
+ℹ all files              |  93.35 |    87.24 |   89.91 | 
+ℹ -------------------------------------------------------------------------
+ℹ end of coverage report
+
+✖ failing tests:
+
+test at test/system.test.ts:246:1
+✖ administrators edit delivery data and cancel/delete only unpaid cancelled orders (305.307013ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== 0
+  
+      at TestContext.<anonymous> (/root/freshmarket-platform/api/test/system.test.ts:263:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /root/freshmarket-platform/api
+npm error workspace @freshmarket/api@1.0.0
+npm error location /root/freshmarket-platform/api
+npm error command failed
+npm error command sh -c tsx --test --experimental-test-coverage test/*.test.ts

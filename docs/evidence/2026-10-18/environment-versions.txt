@@ -1,0 +1,15 @@
+npm warn cli npm v11.19.1 does not support Node.js v18.19.1. This version of npm supports the following node versions: `^20.17.0 || >=22.9.0`. You can find the latest version at https://nodejs.org/.
+node v24.22.0 sqlite 3.53.4 npm 11.19.1
+postgres (PostgreSQL) 17.11
+Redis server v=7.4.11
+4.3.6
+nginx version: nginx/1.28.3
+v24.22.0
+prometheus, version 3.13.4 (branch: HEAD, revision: 007a9e9ba628f815ce83e1ba9f29b97981996c3c)
+docker 29.9.0
+Docker Compose version v5.6.0
+Linux 6.17.13-2-pve
+3
+Mem:           8.0Gi       1.9Gi       2.1Gi        79Mi       4.1Gi       6.1Gi
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+fastify@5.12.5 react@19.3.0 vite@7.3.7 typescript@5.9.3 pg@8.23.1 redis@5.12.1 amqplib@0.10.9 @playwright/test@1.63.0

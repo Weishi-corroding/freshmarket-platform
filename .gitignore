@@ -20,3 +20,4 @@ __pycache__/
 ~$*
 /*.docx
 /*.pdf
+.deploy-history

@@ -1,39 +1,82 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { OrderRepository } from './repository.js';
 import { ensure } from '../../core/errors.js';
+import type { Query, Row } from '../../core/database.js';
+import { traceAttributes, withSpan } from '../../core/tracing.js';
+import { deliveryFee, lockCoupon, markCouponUsed } from '../promotions/coupons.js';
 
+type Checkout = {addressId: string; deliverySlot: string; note?: string};
+const digest = (value: unknown[]) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 export class OrderService {
-  constructor(public repo: OrderRepository, private ttlMinutes = 15) {}
-  async create(userId: string, key: string, input: {addressId: string; deliverySlot: string; note?: string}, traceId: string) {
-    const fingerprint = createHash('sha256').update(JSON.stringify([input.addressId,input.deliverySlot,input.note || ''])).digest('hex');
-    // In PostgreSQL, locking the member serializes their checkout, including the first idempotency insert.
+  constructor(public repo: OrderRepository, private ttlMinutes = 15, private seckillTtlMinutes = 5) {}
+  // In PostgreSQL, locking the member serializes their checkout, including the first idempotency insert.
+  private async begin(tx: Query, userId: string, key: string, fingerprint: string): Promise<string | undefined> {
+    const member=await tx.one('SELECT id,role FROM users WHERE id=?' + (this.repo.db.dialect === 'postgres' ? ' FOR UPDATE' : ''),[userId]);
+    ensure(member?.role==='member',403,'MEMBER_ONLY','仅会员账号可以下单');
+    ensure(await tx.one('SELECT id FROM users WHERE id=? AND active=1 AND deleted_at IS NULL',[userId]),401,'UNAUTHORIZED','账号不可用');
+    const existing = await tx.one('SELECT id,request_hash FROM orders WHERE user_id=? AND idempotency_key=?',[userId,key]);
+    if (existing) { ensure(existing.request_hash === fingerprint,409,'IDEMPOTENCY_CONFLICT','同一请求标识不能用于不同订单'); return existing.id; }
+  }
+  private async address(tx: Query, userId: string, addressId: string) {
+    const address = await tx.one('SELECT * FROM addresses WHERE id=? AND user_id=?',[addressId,userId]);
+    ensure(address,400,'ADDRESS_INVALID','请选择有效的收货地址');
+    return {name: address.name,phone: address.phone,detail: address.detail};
+  }
+  // 写订单金额/地址/商品快照（含每行优惠分摊）、审计与 Outbox，调用方已完成库存扣减
+  private async insert(tx: Query, o: {userId: string; key: string; fingerprint: string; input: Checkout; snapshot: object; lines: Row[]; discount: number; couponId?: string; seckillId?: string; ttl: number}, traceId: string) {
+    const subtotal = o.lines.reduce((sum,p) => sum + p.price*p.quantity,0), fee = deliveryFee(subtotal-o.discount), total = subtotal-o.discount+fee;
+    const orderId = `FM${Date.now()}${randomUUID().slice(0,8)}`, now = Date.now();
+    await tx.run('INSERT INTO orders(id,user_id,status,subtotal,delivery_fee,total,discount,coupon_id,seckill_id,address_snapshot,delivery_slot,note,idempotency_key,request_hash,created_at,expires_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [orderId,o.userId,'pending',subtotal,fee,total,o.discount,o.couponId || null,o.seckillId || null,JSON.stringify(o.snapshot),o.input.deliverySlot,o.input.note || '',o.key,o.fingerprint,now,now+o.ttl*60000,now]);
+    for (const p of o.lines) await tx.run('INSERT INTO order_items(id,order_id,product_id,name,image,unit,price,quantity,discount) VALUES(?,?,?,?,?,?,?,?,?)',[randomUUID(),orderId,p.id,p.name,p.image,p.unit,p.price,p.quantity,p.discount || 0]);
+    await this.repo.audit(tx,o.userId,'order.create',orderId,{total,...(o.discount?{discount:o.discount,couponId:o.couponId}:{}),...(o.seckillId?{seckillId:o.seckillId}:{})},traceId);
+    await this.repo.emit(tx,'order.created',{orderId,userId:o.userId});
+    traceAttributes({'order.id':orderId,'order.total':total,'order.discount':o.discount});
+    return orderId;
+  }
+  async create(userId: string, key: string, input: Checkout & {couponId?: string}, traceId: string) {
+    const fingerprint = digest([input.addressId,input.deliverySlot,input.note || '',...(input.couponId?[input.couponId]:[])]);
     const id = await this.repo.db.transaction(async tx => {
-      const member=await tx.one('SELECT id,role FROM users WHERE id=?' + (this.repo.db.dialect === 'postgres' ? ' FOR UPDATE' : ''),[userId]);
-      ensure(member?.role==='member',403,'MEMBER_ONLY','仅会员账号可以下单');
-      ensure(await tx.one('SELECT id FROM users WHERE id=? AND active=1 AND deleted_at IS NULL',[userId]),401,'UNAUTHORIZED','账号不可用');
-      const existing = await tx.one('SELECT id,request_hash FROM orders WHERE user_id=? AND idempotency_key=?',[userId,key]);
-      if (existing) { ensure(existing.request_hash === fingerprint,409,'IDEMPOTENCY_CONFLICT','同一请求标识不能用于不同订单'); return existing.id; }
-      const address = await tx.one('SELECT * FROM addresses WHERE id=? AND user_id=?',[input.addressId,userId]);
-      ensure(address,400,'ADDRESS_INVALID','请选择有效的收货地址');
+      const existing = await this.begin(tx,userId,key,fingerprint);
+      if (existing) return existing;
+      const snapshot = await this.address(tx,userId,input.addressId);
       const cart = await tx.all('SELECT p.*,c.quantity FROM cart_items c JOIN products p ON p.id=c.product_id WHERE c.user_id=? ORDER BY p.id',[userId]);
       ensure(cart.length,400,'CART_EMPTY','购物车还是空的');
-      const subtotal = cart.reduce((sum,p) => sum + p.price*p.quantity,0);
-      const fee = subtotal >= 9900 ? 0 : 600;
+      const coupon = input.couponId ? await lockCoupon(tx,userId,input.couponId,cart.map(p => ({product_id:p.id,category_id:p.category_id,price:p.price,quantity:p.quantity}))) : undefined;
       for (const product of cart) {
         const changed = await tx.run('UPDATE products SET stock=stock-? WHERE id=? AND active=1 AND deleted_at IS NULL AND stock>=?',[product.quantity,product.id,product.quantity]);
         ensure(changed === 1,409,'OUT_OF_STOCK',`${product.name}库存不足或已下架，请调整购物车`);
       }
-      const orderId = `FM${Date.now()}${randomUUID().slice(0,8)}`, now = Date.now();
-      const snapshot = {name: address.name,phone: address.phone,detail: address.detail};
-      await tx.run('INSERT INTO orders(id,user_id,status,subtotal,delivery_fee,total,address_snapshot,delivery_slot,note,idempotency_key,request_hash,created_at,expires_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [orderId,userId,'pending',subtotal,fee,subtotal+fee,JSON.stringify(snapshot),input.deliverySlot,input.note || '',key,fingerprint,now,now+this.ttlMinutes*60000,now]);
-      for (const p of cart) await tx.run('INSERT INTO order_items(id,order_id,product_id,name,image,unit,price,quantity) VALUES(?,?,?,?,?,?,?,?)',[randomUUID(),orderId,p.id,p.name,p.image,p.unit,p.price,p.quantity]);
+      const orderId = await this.insert(tx,{userId,key,fingerprint,input,snapshot,lines:cart.map(p => ({...p,discount:coupon?.allocation[p.id] || 0})),discount:coupon?.discount || 0,couponId:input.couponId,ttl:this.ttlMinutes},traceId);
+      if (input.couponId) await markCouponUsed(tx,userId,input.couponId,orderId);
       await tx.run('DELETE FROM cart_items WHERE user_id=?',[userId]);
-      await this.repo.audit(tx,userId,'order.create',orderId,{total: subtotal+fee},traceId);
-      await this.repo.emit(tx,'order.created',{orderId,userId});
       return orderId;
     });
     return this.repo.detail(id,userId);
+  }
+  // 秒杀下单：不经过购物车，每人每场限1件；活动名额与商品库存都用条件更新扣减，任一失败整单回滚
+  async seckill(userId: string, activityId: string, key: string, input: Checkout, traceId: string) {
+    const fingerprint = digest(['seckill',activityId,input.addressId,input.deliverySlot,input.note || '']);
+    let created = false;
+    const id = await this.repo.db.transaction(async tx => {
+      const existing = await this.begin(tx,userId,key,fingerprint);
+      if (existing) return existing;
+      const snapshot = await this.address(tx,userId,input.addressId), now = Date.now();
+      const activity = await tx.one('SELECT * FROM seckill_activities WHERE id=? AND active=1',[activityId]);
+      ensure(activity,404,'SECKILL_NOT_FOUND','秒杀活动不存在或已结束');
+      ensure(Number(activity.start_at) <= now,409,'SECKILL_NOT_STARTED','秒杀尚未开始，请稍后再来');
+      ensure(Number(activity.end_at) > now,409,'SECKILL_ENDED','本场秒杀已结束');
+      ensure(!await tx.one('SELECT order_id FROM seckill_participants WHERE activity_id=? AND user_id=?',[activityId,userId]),409,'SECKILL_LIMIT','每人限购1件，您已参与过本场秒杀');
+      ensure(await tx.run('UPDATE seckill_activities SET sold=sold+1 WHERE id=? AND active=1 AND sold<stock AND start_at<=? AND end_at>?',[activityId,now,now]) === 1,409,'SECKILL_SOLD_OUT','手慢了，秒杀名额已抢光');
+      ensure(await tx.run('UPDATE products SET stock=stock-1 WHERE id=? AND active=1 AND deleted_at IS NULL AND stock>=1',[activity.product_id]) === 1,409,'SECKILL_SOLD_OUT','商品库存不足或已下架');
+      const product = (await tx.one('SELECT * FROM products WHERE id=?',[activity.product_id]))!;
+      const orderId = await this.insert(tx,{userId,key,fingerprint,input,snapshot,lines:[{...product,price:Number(activity.price),quantity:1}],discount:0,seckillId:activityId,ttl:this.seckillTtlMinutes},traceId);
+      // 主键 (activity_id,user_id) 兜底并发重复抢购
+      ensure(await tx.run('INSERT INTO seckill_participants(activity_id,user_id,order_id,created_at) VALUES(?,?,?,?) ON CONFLICT(activity_id,user_id) DO NOTHING',[activityId,userId,orderId,now]) === 1,409,'SECKILL_LIMIT','每人限购1件，您已参与过本场秒杀');
+      created = true;
+      return orderId;
+    });
+    return {order: await this.repo.detail(id,userId),created};
   }
   async pay(id: string,userId: string,traceId: string) {
     await this.repo.db.transaction(async tx => {
@@ -58,6 +101,8 @@ export class OrderService {
       if (!userId && !staffActor && (order.status !== 'pending' || Number(order.expires_at) > Date.now())) return;
       ensure(order.status === 'pending',409,'INVALID_STATE','仅待付款订单可取消');
       await this.repo.restock(tx,id);
+      await this.repo.releaseCoupon(tx,id);
+      await this.repo.releaseSeckill(tx,order);
       await tx.run('UPDATE orders SET status=?,updated_at=? WHERE id=?',['cancelled',Date.now(),id]);
       await this.repo.emit(tx,'order.cancelled',{orderId:id,userId:order.user_id});
       await this.repo.audit(tx,staffActor || userId || 'system','order.cancel',id,{},traceId);
@@ -106,7 +151,7 @@ export class OrderService {
       ensure(!await tx.one('SELECT id FROM settlements WHERE order_id=?',[id]),409,'ALREADY_SETTLED','订单已结算，请联系客服人工处理');
       const existing = await tx.one('SELECT * FROM refunds WHERE order_id=?',[id]);
       if (existing) return existing;
-      const orderItems = await tx.all('SELECT product_id,price,quantity FROM order_items WHERE order_id=?',[id]);
+      const orderItems = await tx.all('SELECT product_id,price,quantity,discount FROM order_items WHERE order_id=?',[id]);
       const requested = (input.items || []).filter(item => item.quantity > 0);
       // 默认整单退款；传入 items 时按所选商品计算金额；传入 amount 时按指定金额（不调整库存）
       let amount = order.total, refundItems: {productId:string;quantity:number}[] = [];
@@ -119,7 +164,8 @@ export class OrderService {
           merged[item.productId] = (merged[item.productId] || 0) + item.quantity;
         }
         refundItems = Object.entries(merged).map(([productId,quantity]) => ({productId,quantity}));
-        amount = refundItems.reduce((sum,item) => sum + orderItems.find(o => o.product_id === item.productId)!.price*item.quantity,0);
+        // 使用优惠券的订单按行分摊扣回优惠（向上取整），确保退款不超过该商品实付
+        amount = refundItems.reduce((sum,item) => { const line = orderItems.find(o => o.product_id === item.productId)!; return sum + line.price*item.quantity - Math.ceil(Number(line.discount)*item.quantity/line.quantity); },0);
         ensure(amount > 0,400,'INVALID_REFUND_AMOUNT','退款金额必须大于0');
       } else if (input.amount != null) {
         ensure(Number.isInteger(input.amount) && input.amount > 0 && input.amount <= order.total,400,'INVALID_REFUND_AMOUNT','退款金额需大于0且不超过订单总额');
@@ -152,6 +198,7 @@ export class OrderService {
           for (const item of await tx.all('SELECT product_id,quantity FROM order_items WHERE order_id=? ORDER BY product_id',[order.id])) await tx.run('UPDATE products SET sales=sales-? WHERE id=? AND sales>=?',[item.quantity,item.product_id,item.quantity]);
           await tx.run('UPDATE orders SET status=?,updated_at=? WHERE id=?',['refunded',Date.now(),order.id]);
           await tx.run('UPDATE payments SET status=? WHERE order_id=?',['refunded',order.id]);
+          await this.repo.releaseCoupon(tx,order.id);
         } else if (items.length) {
           // 部分退款（按商品）：只归还所选商品库存并回滚对应销量，订单状态保持不变
           for (const item of items) {
@@ -185,6 +232,9 @@ export class OrderService {
   }
   async expire() {
     const orders = await this.repo.db.all("SELECT id FROM orders WHERE status='pending' AND expires_at<?",[Date.now()]);
-    for (const order of orders) await this.cancel(order.id);
+    // 每笔超时取消单独成 trace，审计 trace_id 与之对应
+    for (const order of orders) await withSpan('order.expire',{attributes:{'order.id':order.id}},span => this.cancel(order.id,undefined,span.spanContext().traceId));
+    // 返回取消数量，调度器据此使商品缓存失效（超时归还的库存立即可见）
+    return orders.length;
   }
 }

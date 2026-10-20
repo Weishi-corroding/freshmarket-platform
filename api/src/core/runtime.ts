@@ -4,6 +4,8 @@ import { randomUUID } from 'node:crypto';
 import type { Database, Row } from './database.js';
 import type { OrderService } from '../modules/orders/service.js';
 import type { FastifyBaseLogger } from 'fastify';
+import { SpanKind, SpanStatusCode, type Context as TraceContext } from '@opentelemetry/api';
+import { childSpan, extractContext, injectContext, withSpan } from './tracing.js';
 
 export class Runtime {
   namespace=process.env.MQ_NAMESPACE || 'fresh';
@@ -32,18 +34,21 @@ export class Runtime {
         await ch.bindQueue(queue,events,'order.*');await ch.prefetch(20);
         await ch.consume(queue,async message=>{
           if(!message)return;
-          try {await this.consume(JSON.parse(message.content.toString()));ch.ack(message);}
+          try {await this.consume(JSON.parse(message.content.toString()),extractContext(message.properties.headers));ch.ack(message);}
           catch(error){this.logger.error({error},'event_consume_failed');ch.nack(message,false,false);}
         });
       } catch(error){this.logger.warn({error},'broker_degraded_outbox_will_wait');}
     }
   }
-  async cacheGet(key:string) { if(!this.redis?.isReady)return null;try {const s=await this.redis.get(key);return s?JSON.parse(s):null;} catch{return null;} }
+  async cacheGet(key:string) { const redis=this.redis;if(!redis?.isReady)return null;try {const s=await childSpan('redis GET',{'db.system.name':'redis','db.operation.name':'GET'},()=>redis.get(key));return s?JSON.parse(s):null;} catch{return null;} }
   async version() {if(this.redis?.isReady)try{return await this.redis.get(this.cacheNamespace+':catalog:version') || '0';}catch{}return String(this.cacheVersion);}
-  async cacheSet(key:string,value:unknown) {if(this.redis?.isReady)try {await this.redis.set(key,JSON.stringify(value),{EX:30});}catch{}}
+  async cacheSet(key:string,value:unknown) {const redis=this.redis;if(redis?.isReady)try {await childSpan('redis SET',{'db.system.name':'redis','db.operation.name':'SET'},()=>redis.set(key,JSON.stringify(value),{EX:30}));}catch{}}
   async invalidate() {this.cacheVersion++;if(this.redis?.isReady)try {await this.redis.incr(this.cacheNamespace+':catalog:version');}catch{}}
-  async consume(event:{id:string;topic:string;payload:{orderId:string;userId:string}}) {
-    const labels:Record<string,string>={'order.created':'订单提交成功','order.paid':'付款成功','order.cancelled':'订单已取消','order.picking':'商品正在拣货','order.delivering':'商品配送中','order.completed':'已确认收货','order.refunded':'退款已完成'};
+  async consume(event:{id:string;topic:string;payload:{orderId:string;userId:string}},parent?:TraceContext) {
+    return withSpan(`event consume ${event.topic}`,{kind:SpanKind.CONSUMER,parent,attributes:{'messaging.destination.name':event.topic,'messaging.message.id':event.id}},()=>this.notify(event));
+  }
+  private async notify(event:{id:string;topic:string;payload:{orderId:string;userId:string}}) {
+    const labels:Record<string,string>={'order.created':'订单提交成功','order.paid':'付款成功','order.cancelled':'订单已取消','order.picking':'商品正在拣货','order.delivering':'商品配送中','order.completed':'已确认收货','order.refunded':'退款已完成','order.partially_refunded':'部分退款已完成'};
     await this.db.transaction(async tx=>{
       const inserted=await tx.run('INSERT INTO processed_events(id,processed_at) VALUES(?,?) ON CONFLICT(id) DO NOTHING',[event.id,Date.now()]);
       if(!inserted)return;
@@ -61,19 +66,23 @@ export class Runtime {
     });
     for(const row of events) {
       const event={id:row.id,topic:row.topic,payload:JSON.parse(row.payload)};
-      try {
-        if(this.channel) {
-          const ch=this.channel;
-          await new Promise<void>((resolve,reject)=>{ch.publish(this.namespace+'.events',row.topic,Buffer.from(JSON.stringify(event)),{persistent:true,messageId:row.id},err=>err?reject(err):resolve());});
-        } else await this.consume(event);
-        await this.db.run("UPDATE outbox SET status='sent',published_at=? WHERE id=?",[Date.now(),row.id]);
-      } catch(error) {await this.db.run("UPDATE outbox SET status='pending' WHERE id=?",[row.id]);this.logger.error({error,eventId:row.id},'outbox_retry');}
+      let carrier={};try {carrier=JSON.parse(row.trace_context || '{}');} catch {}
+      // 发布 span 挂在下单请求的 trace 下；RabbitMQ 消息头携带 traceparent，消费者继续同一条链路
+      await withSpan(`outbox publish ${row.topic}`,{kind:SpanKind.PRODUCER,parent:extractContext(carrier),attributes:{'messaging.system':this.channel?'rabbitmq':'in-process','messaging.destination.name':row.topic,'messaging.message.id':row.id,'outbox.attempts':Number(row.attempts)+1}},async span=>{
+        try {
+          if(this.channel) {
+            const ch=this.channel;
+            await new Promise<void>((resolve,reject)=>{ch.publish(this.namespace+'.events',row.topic,Buffer.from(JSON.stringify(event)),{persistent:true,messageId:row.id,headers:injectContext()},err=>err?reject(err):resolve());});
+          } else await this.consume(event);
+          await this.db.run("UPDATE outbox SET status='sent',published_at=? WHERE id=?",[Date.now(),row.id]);
+        } catch(error) {span.recordException(error as Error);span.setStatus({code:SpanStatusCode.ERROR,message:'outbox_retry'});await this.db.run("UPDATE outbox SET status='pending' WHERE id=?",[row.id]);this.logger.error({error,eventId:row.id},'outbox_retry');}
+      });
     }
   }
   start(orders:OrderService) {
     this.timer=setInterval(async()=>{
       if(this.busy || this.stopping)return;this.busy=true;
-      try {if(Date.now()-this.lastConnect>30000 && ((process.env.AMQP_URL&&!this.channel)||(process.env.REDIS_URL&&!this.redis?.isReady)))await this.connect();await orders.expire();await this.flush();}catch(error){this.logger.error({error},'worker_failed');}finally{this.busy=false;}
+      try {if(Date.now()-this.lastConnect>30000 && ((process.env.AMQP_URL&&!this.channel)||(process.env.REDIS_URL&&!this.redis?.isReady)))await this.connect();if(await orders.expire())await this.invalidate();await this.flush();}catch(error){this.logger.error({error},'worker_failed');}finally{this.busy=false;}
     },2000);this.timer.unref();
   }
   async stop() {

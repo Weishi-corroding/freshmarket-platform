@@ -1,0 +1,33 @@
+## 2026-10-19T02:30:05Z teardown
+ Container freshmarket-postgres-1 Removing 
+ Container freshmarket-grafana-1 Stopped 
+ Container freshmarket-grafana-1 Removing 
+ Container freshmarket-postgres-1 Removed 
+ Container freshmarket-grafana-1 Removed 
+ Container freshmarket-rabbitmq-1 Stopped 
+ Container freshmarket-rabbitmq-1 Removing 
+ Container freshmarket-rabbitmq-1 Removed 
+ Volume freshmarket_rabbit-data Removing 
+ Volume freshmarket_grafana-data Removing 
+ Network freshmarket_default Removing 
+ Volume freshmarket_postgres-data Removing 
+ Volume freshmarket_grafana-data Removed 
+ Volume freshmarket_redis-data Removing 
+ Volume freshmarket_prometheus-data Removing 
+ Network freshmarket_default Removed 
+ Volume freshmarket_rabbit-data Removed 
+ Volume freshmarket_postgres-data Removed 
+ Volume freshmarket_redis-data Removed 
+ Volume freshmarket_prometheus-data Removed 
+fmcheck-pg
+Untagged: freshmarket-api:1.0.0
+Untagged: freshmarket-web:1.0.0
+## remaining
+cpa-manager-plus Up 18 hours
+cli-proxy-api Up 18 hours
+358382a7d2cdf439bdc1be77fccc071c0a339782e11a628c1100df74a96436b8
+cpa-manager-plus-data
+no freshmarket network
+NAME                STATUS              CONFIG FILES
+cliproxyapi         running(1)          /root/CLIProxyAPI/docker-compose.yml
+removed anonymous PG data volume of fmcheck-pg (created 2026-10-18T19:02 local)

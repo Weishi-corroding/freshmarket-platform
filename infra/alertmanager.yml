@@ -1,0 +1,19 @@
+# Alertmanager：接收 Prometheus 告警并分组、去重、抑制。
+# 默认接收器 ops 未配置外部通道（教学环境无可用邮箱/机器人地址），告警可在 http://127.0.0.1:9093 查看；
+# 生产部署在 ops 下补充 webhook_configs / email_configs，例如：
+#   webhook_configs: [{url: 'https://ops.example.com/alert', send_resolved: true}]
+route:
+  receiver: ops
+  group_by: [alertname, severity]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+    - matchers: ['severity="critical"']
+      receiver: ops
+      repeat_interval: 1h
+receivers:
+  - name: ops
+inhibit_rules:
+  - source_matchers: ['alertname="FreshmarketApiDown"']
+    target_matchers: ['severity="warning"']

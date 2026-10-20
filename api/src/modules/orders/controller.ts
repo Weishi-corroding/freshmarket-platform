@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type { Context } from '../../core/context.js';
-import { idParams, pageQuery, pagination, result, text } from '../../core/http.js';
+import { deliverySlot, idParams, pageQuery, pagination, result, text } from '../../core/http.js';
 export async function orderRoutes(app:FastifyInstance,ctx:Context) {
   const authenticated={preHandler:ctx.memberOnly};
-  app.post<{Body:{addressId:string;deliverySlot:string;note?:string};Headers:{'idempotency-key':string}}>('/api/orders',{
+  app.post<{Body:{addressId:string;deliverySlot:string;note?:string;couponId?:string};Headers:{'idempotency-key':string}}>('/api/orders',{
     ...authenticated,schema:{tags:['订单'],security:[{bearerAuth:[]}],headers:{type:'object',required:['idempotency-key'],properties:{'idempotency-key':{type:'string',minLength:8,maxLength:100}}},
-      body:{type:'object',required:['addressId','deliverySlot'],additionalProperties:false,properties:{addressId:text(100),deliverySlot:{type:'string',enum:['尽快送达','今日 18:00–20:00','明日 09:00–12:00','明日 14:00–18:00']},note:{type:'string',maxLength:200}}}}
+      body:{type:'object',required:['addressId','deliverySlot'],additionalProperties:false,properties:{addressId:text(100),deliverySlot,note:{type:'string',maxLength:200},couponId:text(100)}}}
   },async req=>{const order=await ctx.orders.create(req.actor.id,req.headers['idempotency-key'],req.body,req.id);await ctx.runtime.invalidate();return result(req,order);});
   app.get<{Querystring:Record<string,any>}>('/api/orders',{...authenticated,schema:{tags:['订单'],security:[{bearerAuth:[]}],querystring:pageQuery}},async req=>{
     const p=pagination(req.query),where=' WHERE user_id=? AND deleted_at IS NULL'+(req.query.status?' AND status=?':''),params=[req.actor.id];if(req.query.status)params.push(req.query.status);

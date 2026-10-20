@@ -1,0 +1,31 @@
+## 2026-10-19T02:15:07Z baseline: list(cache) p01=[86] db=86
+ freshmarket-postgres-1 Copying freshmarket-postgres-1:/tmp/freshmarket.dump to backups/freshmarket-20261018-191507.dump
+ freshmarket-postgres-1 Copied freshmarket-postgres-1:/tmp/freshmarket.dump to backups/freshmarket-20261018-191507.dump
+Backup saved: backups/freshmarket-20261018-191507.dump
+backup exit 0 duration 0.79s
+total 36
+-rw-r--r-- 1 root root 34009 Oct 18 19:15 freshmarket-20261018-191507.dump
+adjust code 0 stock 586
+after mutation: list(cache warmed) p01=[586] db=586
+ Container freshmarket-api-1 Stopping 
+ Container freshmarket-api-1 Stopped 
+ freshmarket-postgres-1 Copying /tmp/fmcheck-stack/backups/freshmarket-20261018-191507.dump to freshmarket-postgres-1:/tmp/restore.dump
+ freshmarket-postgres-1 Copied /tmp/fmcheck-stack/backups/freshmarket-20261018-191507.dump to freshmarket-postgres-1:/tmp/restore.dump
+ Container freshmarket-postgres-1 Waiting 
+ Container freshmarket-redis-1 Waiting 
+ Container freshmarket-rabbitmq-1 Waiting 
+ Container freshmarket-redis-1 Healthy 
+ Container freshmarket-postgres-1 Healthy 
+ Container freshmarket-rabbitmq-1 Healthy 
+ Container freshmarket-api-1 Starting 
+ Container freshmarket-api-1 Started 
+Database restored and API restarted. Verify /api/health and a representative order.
+restore exit 0 duration 1.81s
+api health after restore: 200 after ~2s
+total restore-to-healthy: 2.85s
+right after restore: db=86 list(cached)=[586]  detail=86
+after 31s TTL: list=[86]
+## dump files left in postgres container /tmp
+total 72
+-rw-r--r--    1 root     root         34009 Oct 19 10:15 freshmarket.dump
+-rw-r--r--    1 root     root         34009 Oct 19 10:15 restore.dump

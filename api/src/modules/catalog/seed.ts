@@ -6,6 +6,12 @@ export const categoryData = [
   ['vegetable','新鲜蔬菜','Carrot'],['dairy','乳品烘焙','Milk'],['ready','方便速食','CookingPot']
 ];
 // Amounts are stored as integer fen, never floating point yuan.
+// [id,名称,类型,门槛,面额/折扣,折扣封顶,适用分类]
+export const couponData:[string,string,string,number,number,number,string|null][] = [
+  ['c-welcome','新人满99减15','amount',9900,1500,0,null],['c-seafood','海鲜满199减30','amount',19900,3000,0,'seafood'],['c-fruit','水果9折券','percent',5000,90,2000,'fruit']
+];
+// [id,商品,标题,秒杀价,名额]，演示活动自首次写入起持续7天
+export const seckillData:[string,string,string,number,number][] = [['sk-cherry','p04','车厘子限时秒杀',3990,20]];
 export const productData = [
   ['p01','fruit','丹东红颜草莓','一口鲜甜，春日的第一颗草莓',2990,3990,86,'strawberry','500g / 盒','辽宁丹东','0–4°C 冷藏','当季鲜选',320],
   ['p02','fruit','海南金钻凤梨','树上熟，清甜多汁免泡盐水',1990,2590,120,'pineapple','1个 / 约1.2kg','海南万宁','阴凉通风处','产地直采',210],
@@ -66,6 +72,9 @@ export async function seed(db: Database) {
       await tx.run('INSERT INTO products(id,category_id,name,subtitle,description,price,original_price,stock,sales,views,image,unit,origin,storage,tag,active,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING',
         [id,category,name,subtitle,`${name}，${subtitle}。严选产区与合作供应商，批次验收后发货。商品以实际重量与包装标注为准。请按储存建议保存并尽快食用。`,price,original,stock,0,views,`/images/${image}.jpg`,unit,origin,storage,tag,1,now]);
     }
+    // 演示优惠券与秒杀只补缺失记录，有效期从首次写入起算；已修改或停用的记录不会被覆盖
+    for (const [id,name,kind,threshold,value,maxDiscount,category] of couponData) await tx.run('INSERT INTO coupons(id,name,kind,threshold,value,max_discount,category_id,total,valid_from,valid_to,active,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING',[id,name,kind,threshold,value,maxDiscount,category,1000,now,now+365*86400000,1,now]);
+    for (const [id,product,title,price,stock] of seckillData) await tx.run('INSERT INTO seckill_activities(id,product_id,title,price,stock,start_at,end_at,active,created_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING',[id,product,title,price,stock,now,now+7*86400000,1,now]);
     // Existing shops receive missing demo products without resetting accounts or business data.
     if (hasUsers) return;
     const hash = hashPassword(process.env.DEMO_PASSWORD || 'Fresh@123456');
