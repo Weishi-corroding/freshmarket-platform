@@ -66,7 +66,7 @@ sh scripts/init-env.sh
 sh scripts/deploy.sh
 ```
 
-`init-env` 为每份部署生成独立的 `COMPOSE_PROJECT_NAME`，同一台机器上的多份检出不会共用数据卷。`deploy` 以“提交号-时间”作为镜像版本构建并启动，写回 `.env.docker` 的 `APP_VERSION` 并记录到 `.deploy-history`，旧镜像保留用于回滚。运维脚本同时提供 PowerShell 与 POSIX sh 两个版本：`backup`、`restore`（恢复后清空 Redis 缓存与秒杀令牌，删除容器内临时转储）、`rollback`（省略版本号时回到上一次部署）。
+`init-env` 生成随机密钥与独立的 `COMPOSE_PROJECT_NAME`（同一台机器上的多份检出不会共用数据卷），并显式写出 `SEED_DEMO`、`VITE_DEMO`，文件已存在时拒绝覆盖。`deploy` 先检查 Docker 与配置，以“提交号-时间”作为镜像版本构建，`up --wait` 等待全部健康检查并经网关探测 `/api/health`；健康时写回 `.env.docker` 的 `APP_VERSION` 并记录到 `.deploy-history`，不健康时自动把 api/web 退回上一次成功的版本且不记录新版本。运维脚本同时提供 PowerShell 与 POSIX sh 两个版本：`rollback`（省略版本号时回到上一次部署，先确认两个旧镜像都在本机）、`backup`（`pg_restore --list` 校验转储可读，删除容器内临时文件）、`restore`（须加 `--yes` 或 `-Force` 确认；先把当前库备份到 `backups/pre-restore`，再停 API、单事务恢复、清空 Redis 缓存与秒杀令牌，任一步失败都不启动 API）。`sh scripts/test-ops.sh` 与 `scripts/test-ops.ps1` 用 docker 替身检查这些成功与失败分支，不触及真实容器。
 
 商场与后台：http://localhost:8080；监控：http://localhost:3000；链路追踪 Jaeger：http://localhost:16686；Prometheus：http://localhost:9090；告警 Alertmanager：http://localhost:9093；RabbitMQ 管理：http://localhost:15672。网关不对外提供 Swagger（开发模式仍在 3001 端口），并以真实客户端地址转发给 API（`TRUST_PROXY=1`），限流按每个访客计数。Alertmanager 默认接收器未配置外部通道，需在 `infra/alertmanager.yml` 补充 webhook 或邮件。Grafana 与消息队列密码在 `.env.docker` 中。PostgreSQL、Redis、API 仅在容器网络内部提供服务。
 
@@ -96,7 +96,7 @@ API 接入 OpenTelemetry 链路追踪：请求 ID 即 W3C traceId，接收上游
 
 订单事务使用库存条件更新防超卖；支付、退款和结算采用唯一约束与订单行锁；Outbox 在业务事务中写入事件，RabbitMQ 使用持久化消息、发布确认与消费去重。未配置消息队列的本地模式通过持久化 Outbox 执行进程内消费。详细边界见 [设计文档](docs/design.md)。
 
-RabbitMQ 通道断开、消费者取消或初始化失败后会重建连接与拓扑。发布使用 mandatory 路由检查，不可路由退回、负向确认、5秒确认超时均保留 Outbox 重试；已配置 MQ 时批次中断不会切换为本地消费。监控独立展示数据库探测、Redis/MQ连接就绪和最旧未发送事件时长，并配置依赖故障与事件积压告警。当前缺陷状态与实测边界见 [2026-10-20 维护记录](docs/maintenance-2026-10-20.md)。
+RabbitMQ 通道断开、消费者取消或初始化失败后会重建连接与拓扑。发布使用 mandatory 路由检查，不可路由退回、负向确认、5秒确认超时均保留 Outbox 重试；已配置 MQ 时批次中断不会切换为本地消费。监控独立展示数据库探测、Redis/MQ连接就绪和最旧未发送事件时长，并配置依赖故障与事件积压告警。当前缺陷状态与实测边界见 [测试报告](docs/test-report.md)。
 
 ## 验证与复现
 
@@ -120,10 +120,10 @@ PostgreSQL 集成测试可设置 `TEST_DATABASE_URL`；测试会创建独立临�
 - [测试报告](docs/test-report.md)：自动化测试、覆盖率、端到端截图、压测及验证边界。
 - [部署运维](docs/deployment.md)：环境配置、启动、备份、恢复、回滚、监控与故障处理。
 - [AI过程记录](docs/ai-log.md)、[架构决策](docs/adr.md)、[15分钟讲解脚本](docs/demo-script.md)。
-- `database/schema.sql`、`database/seed.sql`、`.github/workflows/ci.yml`、`infra/`。
-- `deliverables/`：需求、设计、测试 Word/PDF，保留原有正文与格式，末尾追加 2026-10-20 修订补充；原始历史结论和本轮结果分别记录。
+- `database/schema.sql`（按账号、商品目录、订单与资金、营销、可靠消息与审计、索引分段，带列注释，两种数据库通用且可重复执行）、`database/seed.sql`（由 `scripts/export-seed.mjs` 从 seed.ts 生成，仅供实验环境手工导入）、`.github/workflows/ci.yml`、`infra/`。`api/test/database-scripts.test.ts` 直接执行这两个脚本，校验可重复执行、与 seed.ts 一致、脚本建库可启动 API 以及外键列均有索引。
+- `deliverables/`：需求、设计、测试 Word/PDF（3.0 版，2026-10-21），由 `docs/requirements.md`、`docs/design.md`、`docs/test-report.md` 生成；正文宋体、标题黑体、西文 Times New Roman，文字与表格线均为黑色，仅图片与流程图带颜色。
 
-文档生成：`python scripts/generate-deliverables.py`（依赖 `python-docx`、`python-pptx`、Pillow）；源码压缩包：`python scripts/package.py`。姓名、学号、团队分工和签名由提交人据实填写。
+企业文档生成：`python scripts/generate-enterprise-docs.py`（依赖 `python-docx`、Pillow），流程图按 mermaid 源码哈希从 `docs/diagrams/mermaid-manifest.json` 取图，新增或修改的图先用 `node scripts/render-mermaid.mjs` 渲染（需 mermaid 浏览器包，见脚本注释）；随后 `scripts/render-documents.ps1` 由 Word 更新目录与页码并导出 PDF。源码压缩包：`python scripts/package.py`。姓名、学号、团队分工和签名由提交人据实填写。
 
 当前检出已不包含旧版 PPT、实验报告、运维手册和演示视频，现有清单可能仍引用历史文件，正式交付前需重新生成并校验。录屏脚本为 `scripts/record-demo.mjs`，读取本机 `.env.docker`，需要 Playwright 浏览器与 FFmpeg；运行 `npx playwright install ffmpeg` 后执行 `node scripts/record-demo.mjs`。自动录屏会创建演示会员及真实沙箱订单。
 

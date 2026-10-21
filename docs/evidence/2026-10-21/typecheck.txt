@@ -1,0 +1,13 @@
+
+> freshmarket-platform@1.0.0 typecheck
+> npm run typecheck -w api && npm run typecheck -w web
+
+
+> @freshmarket/api@1.0.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @freshmarket/web@1.0.0 typecheck
+> tsc -b --pretty false
+
+exit 0

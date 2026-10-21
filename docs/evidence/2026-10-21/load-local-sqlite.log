@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-10-20T18:39:48.077Z",
+  "scope": "Local catalog HTTP endpoint, single process, SQLite, no Redis; indicative only, not production capacity",
+  "node": "v24.15.0",
+  "platform": "win32",
+  "origin": "http://127.0.0.1:3011",
+  "concurrency": 10,
+  "requests": 200,
+  "seconds": 0.13563650000000002,
+  "qps": 1474.53,
+  "meanMs": 5.92,
+  "p50Ms": 4.62,
+  "p95Ms": 20.07,
+  "p99Ms": 23.67,
+  "errors": 0,
+  "errorRate": 0,
+  "statuses": {
+    "200": 200
+  }
+}

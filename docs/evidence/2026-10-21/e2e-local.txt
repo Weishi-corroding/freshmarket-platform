@@ -1,0 +1,55 @@
+
+> freshmarket-platform@1.0.0 test:e2e
+> playwright test
+
+
+Running 9 tests using 1 worker
+
+  ✓  1 e2e\shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details (1.0s)
+  ✓  2 e2e\shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar (729ms)
+  ✓  3 e2e\shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow (649ms)
+  ✓  4 e2e\shopping.spec.ts:86:5 › member checkout, payment, staff fulfillment, receipt, review and settlement (2.1s)
+  ✘  5 e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench (1.0m)
+  ✓  6 e2e\shopping.spec.ts:107:5 › warehouse UI shows fulfillment and inventory but hides privileged sections (921ms)
+  ✓  7 e2e\shopping.spec.ts:114:5 › header delivery address selector switches regions and syncs the label (611ms)
+  ✓  8 e2e\shopping.spec.ts:127:5 › delivery time options mark only the selected slot with a check icon (1.3s)
+  ✓  9 e2e\shopping.spec.ts:140:5 › modal inputs accept typing and partial refund can be submitted (1.6s)
+
+
+  1) e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench ────
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for getByLabel('账号', { exact: true })
+
+
+       5 | async function login(page:Page,username='admin'){
+       6 |   await page.goto('/admin/login');
+    >  7 |   await page.getByLabel('账号',{exact:true}).fill(username);
+         |                                            ^
+       8 |   await page.getByLabel('密码',{exact:true}).fill(process.env.DEMO_PASSWORD || 'Fresh@123456');
+       9 |   await page.getByRole('button',{name:'登录工作台',exact:true}).click();
+      10 |   await expect(page.locator('.admin-sidebar')).toBeVisible();
+        at login (D:\Codes\AI辅助软件开发实践\freshmarket-platform\e2e\shopping.spec.ts:7:44)
+        at D:\Codes\AI辅助软件开发实践\freshmarket-platform\e2e\shopping.spec.ts:105:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench ─────
+  8 passed (2.2m)
+exit 1

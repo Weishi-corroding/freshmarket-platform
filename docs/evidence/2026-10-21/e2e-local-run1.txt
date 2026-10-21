@@ -1,0 +1,141 @@
+
+> freshmarket-platform@1.0.0 test:e2e
+> playwright test
+
+
+Running 9 tests using 1 worker
+
+  ✘  1 e2e\shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details (15.1s)
+  ✘  2 e2e\shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar (1.2m)
+  ✘  3 e2e\shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow (11.2s)
+  ✓  4 e2e\shopping.spec.ts:86:5 › member checkout, payment, staff fulfillment, receipt, review and settlement (2.2s)
+  ✘  5 e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench (1.2m)
+  ✓  6 e2e\shopping.spec.ts:107:5 › warehouse UI shows fulfillment and inventory but hides privileged sections (998ms)
+  ✓  7 e2e\shopping.spec.ts:114:5 › header delivery address selector switches regions and syncs the label (650ms)
+  ✓  8 e2e\shopping.spec.ts:127:5 › delivery time options mark only the selected slot with a check icon (1.4s)
+  ✓  9 e2e\shopping.spec.ts:140:5 › modal inputs accept typing and partial refund can be submitted (2.0s)
+
+
+  1) e2e\shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details ────
+
+    Error: browserContext.newPage: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\xunlin\AppData\Local\Temp\playwright_chromiumdev_profile-xG88Ew --remote-debugging-pipe --no-startup-window
+    <launched> pid=42436
+
+    Error Context: test-results\shopping-desktop-catalog-r-e3ca5--search-and-product-details\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shopping-desktop-catalog-r-e3ca5--search-and-product-details\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shopping-desktop-catalog-r-e3ca5--search-and-product-details\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e\shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar ─
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.category-section').getByRole('button', { name: '时令水果', exact: true })
+        - locator resolved to <button class="category ">…</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - performing click action
+
+
+      69 |   await expect(nav.getByRole('link',{name:'首页',exact:true})).not.toHaveClass(/active/);
+      70 |   await expect(iconBar.getByRole('button',{name:'海鲜水产',exact:true})).toHaveClass(/selected/);
+    > 71 |   await iconBar.getByRole('button',{name:'时令水果',exact:true}).click();
+         |                                                              ^
+      72 |   await expect(nav.getByRole('link',{name:'时令水果',exact:true})).toHaveClass(/active/);
+      73 |   await expect(iconBar.getByRole('button',{name:'时令水果',exact:true})).toHaveClass(/selected/);
+      74 |   await nav.getByRole('link',{name:'首页',exact:true}).click();
+        at D:\Codes\AI辅助软件开发实践\freshmarket-platform\e2e\shopping.spec.ts:71:62
+
+    Error Context: test-results\shopping-top-navigation-hi-58c21--with-the-icon-category-bar\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shopping-top-navigation-hi-58c21--with-the-icon-category-bar\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shopping-top-navigation-hi-58c21--with-the-icon-category-bar\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) e2e\shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow ────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.product-card')
+    Expected: 12
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('.product-card') with timeout 5000ms
+      - waiting for locator('.product-card')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      78 | test('mobile shop has usable controls and no horizontal overflow',async({page})=>{
+      79 |   await page.setViewportSize({width:390,height:844});await page.goto('/');
+    > 80 |   await expect(page.locator('.product-card')).toHaveCount(12);
+         |                                               ^
+      81 |   await page.evaluate(async()=>{await Promise.all(Array.from(document.images).map(img=>{img.loading='eager';return img.decode();}));});
+      82 |   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+      83 |   await expect(page.getByRole('button',{name:'加入购物车 丹东红颜草莓',exact:true})).toBeVisible();
+        at D:\Codes\AI辅助软件开发实践\freshmarket-platform\e2e\shopping.spec.ts:80:47
+
+    Error Context: test-results\shopping-mobile-shop-has-u-24c22--and-no-horizontal-overflow\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shopping-mobile-shop-has-u-24c22--and-no-horizontal-overflow\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shopping-mobile-shop-has-u-24c22--and-no-horizontal-overflow\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench ────
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.goto: Test timeout of 60000ms exceeded.
+    Call log:
+      - navigating to "http://127.0.0.1:5173/admin", waiting until "load"
+
+
+      103 |   const row=page.locator('tr').filter({hasText:'尚未发货，需要取消本次采购'}).first();await row.getByRole('button',{name:'同意退款',exact:true}).click();await page.getByRole('button',{name:'确认退款',exact:true}).click();await expect(page.getByRole('dialog')).toBeHidden();
+      104 |   await expect(row.getByText('已通过',{exact:true})).toBeVisible();await page.screenshot({path:screenshotDir+'/04-refund-workbench.png',fullPage:true});
+    > 105 |   await page.getByRole('button',{name:'退出登录',exact:true}).click();await login(page);await page.goto('/admin');await expect(page.getByRole('heading',{name:'经营概览'})).toBeVisible();await page.screenshot({path:screenshotDir+'/05-admin-dashboard.png',fullPage:true});await page.goto('/admin/audit');await expect(page.getByRole('heading',{name:'审计日志'})).toBeVisible();await expect(page.locator('table')).toContainText('refund.decision');await page.screenshot({path:screenshotDir+'/06-audit-log.png',fullPage:true});
+          |                                                                                                ^
+      106 | });
+      107 | test('warehouse UI shows fulfillment and inventory but hides privileged sections',async({page})=>{
+      108 |   await page.goto('/');await login(page,'warehouse');await page.goto('/admin/stock');await expect(page.getByRole('heading',{name:'库存管理',exact:true})).toBeVisible();
+        at D:\Codes\AI辅助软件开发实践\freshmarket-platform\e2e\shopping.spec.ts:105:96
+
+    Error Context: test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    e2e\shopping.spec.ts:48:5 › desktop catalog, real local images, search and product details ─────
+    e2e\shopping.spec.ts:63:5 › top navigation highlight stays in sync with the icon category bar ──
+    e2e\shopping.spec.ts:78:5 › mobile shop has usable controls and no horizontal overflow ─────────
+    e2e\shopping.spec.ts:97:5 › customer refund and service audit are visible in the workbench ─────
+  5 passed (3.1m)
+exit 1

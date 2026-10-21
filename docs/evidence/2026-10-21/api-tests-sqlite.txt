@@ -1,0 +1,144 @@
+
+> freshmarket-platform@1.0.0 test
+> npm run test -w api
+
+
+> @freshmarket/api@1.0.0 test
+> tsx --test --experimental-test-coverage test/*.test.ts
+
+✔ schema.sql 与 seed.sql 可重复执行，演示数据与 seed.ts 一致 (172.9045ms)
+✔ 脚本初始化的数据库可直接由 API 启动，迁移与种子不重复写入 (487.5897ms)
+✔ schema.sql 为每个外键列建立前导索引 (1.7711ms)
+✔ W3C trace context joins HTTP, SQL, audit and asynchronous outbox spans (308.9514ms)
+✔ failing requests and expired orders keep traceable spans and audit trace ids (85.5756ms)
+✔ search suggestions reuse fuzzy matching and hot keywords count real storefront searches (93.7557ms)
+✔ related products rank paid co-purchases before same-category fallbacks (107.6062ms)
+✔ recommendations personalize by purchased and carted categories (78.468ms)
+✔ coupon allocation always sums to the discount and never exceeds a line (60.24ms)
+✔ coupons are claimed once per member and the issue quantity is never exceeded (114.7146ms)
+✔ checkout applies the coupon, allocates the discount and computes delivery after discount (106.8095ms)
+✔ cancel and full refund return coupons while partial refunds deduct allocated discounts (90.8236ms)
+✔ administrators validate coupon rules and lock them after members claim (140.5353ms)
+✔ seckill sells one unit per member at the activity price and releases quota on cancel (67.3847ms)
+✔ seckill enforces its time window and expired orders release quota (70.8228ms)
+✔ concurrent seckill buyers never exceed the activity quota (187.6666ms)
+✔ seckill administration validates prices, windows and locks sold activities (109.3948ms)
+✔ dashboard aggregates are numbers on every database, including zero orders (292.3691ms)
+✔ per-member limits key on the verified subject, so new tokens do not reset the bucket (103.2098ms)
+✔ without TRUST_PROXY a spoofed X-Forwarded-For cannot open a new rate-limit bucket (411.7493ms)
+✔ with TRUST_PROXY=1 rate limits count each real client behind the gateway (474.1533ms)
+✔ expiry reports cancelled orders so the worker can invalidate the catalog cache (65.0372ms)
+✔ partial refund events produce a specific member notification (57.1473ms)
+✔ deleting the default address promotes the next address to default (61.3073ms)
+✔ channel-only closure rebuilds the connection; late old close cannot clear the new channel (283.3226ms)
+✔ topology setup failure closes the partial connection and permits retry (74.4396ms)
+✔ channel errors and consumer cancellation retire the connection and recover (71.1457ms)
+✔ unroutable return followed by a positive confirm keeps the event pending; retry can succeed (76.995ms)
+✔ a disconnect during a batch never switches the remaining events to local consumption (67.24ms)
+✔ negative confirms and synchronous publish errors keep events retryable without listener leaks (61.7982ms)
+✔ missing confirms time out and release the worker for a later reconnect (61.8209ms)
+✔ metrics distinguish a successful scrape from database failure and configured dependency outages (80.8895ms)
+✔ search highlights actual shared characters without changing product text (1.4436ms)
+✔ highlighting preserves original glyphs under Unicode and case normalization (0.1443ms)
+✔ highlight search terms are literal text including regexp and HTML characters (0.1889ms)
+✔ password hashes are salted and verified using scrypt (383.5016ms)
+✔ login, JWT identity and invalid credentials (163.5239ms)
+✔ registration rejects role injection and creates members only (138.3551ms)
+✔ RBAC rejects anonymous, members and staff outside their role (76.8244ms)
+✔ member and staff logins issue separate identities and reject the opposite portal (518.9274ms)
+✔ all employee roles are blocked from shopping even when historical carts and orders exist (103.9308ms)
+✔ account lists and employee provisioning keep memberships separate (193.9305ms)
+✔ legacy tokens and stale account types cannot cross the member and staff boundary (60.5401ms)
+✔ administrators can create, search, inspect, edit and delete both account types (199.3351ms)
+✔ account CRUD enforces roles, type boundaries, validation and self protection (75.1642ms)
+✔ password resets, disable/enable and deletion invalidate old sessions for both portals (424.3299ms)
+✔ concurrent administrator demotions preserve one active administrator (97.6619ms)
+✔ member deletion blocks unfinished business and preserves completed order history (76.0478ms)
+✔ only administrators delete goods, while history, refunds and seed tombstones survive (83.6764ms)
+✔ catalog administration supports create, detail, edit and visibility filters (71.9269ms)
+✔ administrators edit delivery data and cancel/delete only unpaid cancelled orders (82.6368ms)
+✔ paid, fulfilled and financial records cannot be deleted or bypass business transitions (80.6759ms)
+✔ catalog validates sort, bounds pagination, and parameterizes search (63.4541ms)
+✔ catalog seeding fills existing shops without changing inventory, accounts or orders (71.2495ms)
+✔ catalog search tolerates a single name typo and requires every keyword (72.6158ms)
+✔ catalog search rejects insufficient overlaps and literal SQL wildcards (73.1908ms)
+✔ two-character searches use the same overlap algorithm for any product name (66.9337ms)
+✔ weak overlap results are capped before pagination without capping accurate matches (70.3663ms)
+✔ search relevance precedes recommendation while explicit price and sales sorts still apply (71.5294ms)
+✔ search filters and ranks all matches before pagination (67.6964ms)
+✔ fuzzy search respects category and visibility and also works in the workbench (66.4547ms)
+✔ default sort ranks by weighted recommendation instead of upload time (66.4561ms)
+✔ cart maintains quantities and rejects stock overflow (68.8827ms)
+✔ checkout snapshots prices/address, applies fee and reserves inventory (67.9284ms)
+✔ checkout applies free shipping at 99 yuan and above (67.414ms)
+✔ eight simultaneous retries with same idempotency key create one order (79.5456ms)
+✔ idempotency key cannot be reused with another payload (68.6925ms)
+✔ failed multi-product checkout rolls back all reservations and preserves cart (70.4325ms)
+✔ competing members cannot oversell the final three units (103.6318ms)
+✔ duplicate sandbox payments never double charge or inflate sales (73.1961ms)
+✔ pay-versus-cancel race has exactly one winning transition (68.8152ms)
+✔ cancel is idempotent and stock is returned once (66.6145ms)
+✔ expiry rejects payment and worker returns stock only once (69.0147ms)
+✔ member cannot read, pay, cancel or refund another member order (101.5161ms)
+✔ fulfillment follows a strict state machine and receive checks ownership (72.1179ms)
+✔ pending refund blocks fulfillment and approval restocks unshipped goods once (71.9664ms)
+✔ fresh food already delivered is never restocked after refund (72.0928ms)
+✔ partial refund restocks only the selected items and keeps the order active (70.7572ms)
+✔ partial refund amount is bounded and nets the settlement (74.6134ms)
+✔ reviews require received items and prevent duplicate reviews (71.5474ms)
+✔ settlements exclude pending refunds and never settle twice (76.5233ms)
+✔ transactional outbox retries failed processing and deduplicates notifications (70.8215ms)
+✔ role revocation takes effect even for previously signed JWT (63.5218ms)
+✔ stock adjustments cannot make inventory negative and produce an audit trail (68.633ms)
+✔ address validation, ownership and default selection (97.3834ms)
+✔ dashboard, OpenAPI, health, metrics and masked staff order responses (78.7379ms)
+✔ login rate limit blocks brute force attempts with a uniform error (375.3402ms)
+ℹ tests 87
+ℹ suites 0
+ℹ pass 87
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6565.7379
+ℹ start of coverage report
+ℹ ------------------------------------------------------------------------
+ℹ file                   | line % | branch % | funcs % | uncovered lines
+ℹ ------------------------------------------------------------------------
+ℹ src                    |        |          |         | 
+ℹ  app.ts                |  95.92 |    84.93 |   95.24 | 34-37
+ℹ  core                  |        |          |         | 
+ℹ   database.ts          |  66.67 |    91.67 |   73.91 | 18-25 35-55
+ℹ   errors.ts            | 100.00 |   100.00 |  100.00 | 
+ℹ   http.ts              | 100.00 |    66.67 |  100.00 | 
+ℹ   runtime.ts           |  91.80 |    69.74 |   67.44 | 22-25 47 110-114
+ℹ   security.ts          | 100.00 |    80.00 |  100.00 | 
+ℹ   tracing.ts           | 100.00 |    82.54 |   93.55 | 
+ℹ  modules               |        |          |         | 
+ℹ   accounts             |        |          |         | 
+ℹ    controller.ts       | 100.00 |   100.00 |   93.33 | 
+ℹ    service.ts          |  97.83 |    88.64 |  100.00 | 70-72
+ℹ   admin                |        |          |         | 
+ℹ    controller.ts       | 100.00 |    93.06 |  100.00 | 
+ℹ   catalog              |        |          |         | 
+ℹ    controller.ts       | 100.00 |   100.00 |   87.50 | 
+ℹ    search.ts           | 100.00 |    98.25 |  100.00 | 
+ℹ    seed.ts             | 100.00 |   100.00 |  100.00 | 
+ℹ    service.ts          | 100.00 |    89.52 |   95.12 | 
+ℹ   orders               |        |          |         | 
+ℹ    controller.ts       | 100.00 |    86.67 |   90.00 | 
+ℹ    repository.ts       | 100.00 |    95.00 |  100.00 | 
+ℹ    service.ts          | 100.00 |    96.50 |  100.00 | 
+ℹ   promotions           |        |          |         | 
+ℹ    controller.ts       | 100.00 |    95.83 |  100.00 | 
+ℹ    coupons.ts          | 100.00 |    87.80 |   96.55 | 
+ℹ    seckill.ts          |  93.33 |    73.17 |   84.62 | 28-32
+ℹ ..                     |        |          |         | 
+ℹ  web                   |        |          |         | 
+ℹ   src                  |        |          |         | 
+ℹ    search-highlight.ts | 100.00 |   100.00 |  100.00 | 
+ℹ ------------------------------------------------------------------------
+ℹ all files              |  96.68 |    88.67 |   91.91 | 
+ℹ ------------------------------------------------------------------------
+ℹ end of coverage report
+exit 0

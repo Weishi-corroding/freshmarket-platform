@@ -21,6 +21,7 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - run: sh scripts/test-ops.sh
       - run: docker compose config --quiet
         env: {DB_PASSWORD: ci-db-only, JWT_SECRET: ci-key-only-change-for-production-123456, MQ_PASSWORD: ci-mq-only, GRAFANA_PASSWORD: ci-grafana-only, DEMO_PASSWORD: CIOnlyDemo12345}
       - uses: actions/upload-artifact@v4

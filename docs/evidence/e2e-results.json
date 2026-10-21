@@ -1,12 +1,12 @@
 {
   "config": {
     "argv": [
-      "C:\\Program Files\\nodejs\\node.exe",
-      "C:\\Users\\fuyi\\Desktop\\freshmarket-platform-main\\node_modules\\@playwright\\test\\cli.js",
+      "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\node_modules\\node\\bin\\node.exe",
+      "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\node_modules\\@playwright\\test\\cli.js",
       "test"
     ],
-    "configFile": "C:\\Users\\fuyi\\Desktop\\freshmarket-platform-main\\playwright.config.ts",
-    "rootDir": "C:/Users/fuyi/Desktop/freshmarket-platform-main/e2e",
+    "configFile": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\playwright.config.ts",
+    "rootDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/e2e",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -22,7 +22,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "C:/Users/fuyi/Desktop/freshmarket-platform-main/test-results",
+        "outputDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -30,7 +30,7 @@
         },
         "id": "",
         "name": "",
-        "testDir": "C:/Users/fuyi/Desktop/freshmarket-platform-main/e2e",
+        "testDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -91,12 +91,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 7408,
+                  "duration": 1045,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-12T00:49:03.946Z",
+                  "startTime": "2026-10-20T18:35:44.100Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -106,7 +106,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-92174939eaf101c849b1",
           "file": "shopping.spec.ts",
-          "line": 47,
+          "line": 48,
           "column": 5
         },
         {
@@ -125,12 +125,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1020,
+                  "duration": 729,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-12T00:49:11.923Z",
+                  "startTime": "2026-10-20T18:35:45.493Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -140,7 +140,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-99a810b093de59a74a97",
           "file": "shopping.spec.ts",
-          "line": 62,
+          "line": 63,
           "column": 5
         },
         {
@@ -159,12 +159,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 866,
+                  "duration": 649,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-12T00:49:12.956Z",
+                  "startTime": "2026-10-20T18:35:46.228Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -174,7 +174,7 @@
           ],
           "id": "f177f4eaa9abb9f5894f-3c6cf8daaa4fc8b0c811",
           "file": "shopping.spec.ts",
-          "line": 77,
+          "line": 78,
           "column": 5
         },
         {
@@ -193,12 +193,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2765,
+                  "duration": 2067,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-12T00:49:13.834Z",
+                  "startTime": "2026-10-20T18:35:46.886Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -208,12 +208,12 @@
           ],
           "id": "f177f4eaa9abb9f5894f-6f715e1bb694aa769313",
           "file": "shopping.spec.ts",
-          "line": 85,
+          "line": 86,
           "column": 5
         },
         {
           "title": "customer refund and service audit are visible in the workbench",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -226,23 +226,55 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3806,
-                  "errors": [],
+                  "status": "timedOut",
+                  "duration": 60283,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                        "column": 44,
+                        "line": 7
+                      },
+                      "message": "Error: locator.fill: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('账号', { exact: true })\u001b[22m\n\n\n   5 | async function login(page:Page,username='admin'){\n   6 |   await page.goto('/admin/login');\n>  7 |   await page.getByLabel('账号',{exact:true}).fill(username);\n     |                                            ^\n   8 |   await page.getByLabel('密码',{exact:true}).fill(process.env.DEMO_PASSWORD || 'Fresh@123456');\n   9 |   await page.getByRole('button',{name:'登录工作台',exact:true}).click();\n  10 |   await expect(page.locator('.admin-sidebar')).toBeVisible();\n    at login (D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:7:44)\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:105:67"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-12T00:49:16.609Z",
+                  "startTime": "2026-10-20T18:35:48.960Z",
                   "annotations": [],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\\trace.zip"
+                    }
+                  ]
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "f177f4eaa9abb9f5894f-331d9f94bc69352a6230",
           "file": "shopping.spec.ts",
-          "line": 96,
+          "line": 97,
           "column": 5
         },
         {
@@ -258,15 +290,15 @@
               "projectName": "",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1501,
+                  "duration": 921,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-12T00:49:20.428Z",
+                  "startTime": "2026-10-20T18:37:20.245Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -276,7 +308,109 @@
           ],
           "id": "f177f4eaa9abb9f5894f-2e5cfb8cefad25feb721",
           "file": "shopping.spec.ts",
-          "line": 106,
+          "line": 107,
+          "column": 5
+        },
+        {
+          "title": "header delivery address selector switches regions and syncs the label",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 611,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:37:21.598Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-c33bfee8ce27f4617051",
+          "file": "shopping.spec.ts",
+          "line": 114,
+          "column": 5
+        },
+        {
+          "title": "delivery time options mark only the selected slot with a check icon",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1250,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:37:22.215Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-8a1867f90c9a5fcf4cdd",
+          "file": "shopping.spec.ts",
+          "line": 127,
+          "column": 5
+        },
+        {
+          "title": "modal inputs accept typing and partial refund can be submitted",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1581,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:37:23.471Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-8dc256c5bc60b38c06be",
+          "file": "shopping.spec.ts",
+          "line": 140,
           "column": 5
         }
       ]
@@ -284,11 +418,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-12T00:48:55.919Z",
-    "duration": 26624.107,
-    "expected": 6,
+    "startTime": "2026-10-20T18:35:42.944Z",
+    "duration": 133380.859,
+    "expected": 8,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

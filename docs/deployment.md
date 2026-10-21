@@ -1,6 +1,6 @@
 # 部署运维手册
 
-当前维护状态与验证边界见 [2026-10-20 维护记录](maintenance-2026-10-20.md)。本轮未启动完整 Docker 栈；下列步骤是当前操作说明，不代表本轮已完成真实恢复或发布验收。
+本手册描述当前脚本的用法与行为；各项的实际验证范围见[测试报告](test-report.md)。
 
 ## 1. 环境分离
 
@@ -15,7 +15,7 @@ Docker环境设置NODE_ENV=production以启用强配置校验，但Compose整体
 
 ## 2. 启动与停止
 
-Windows：`scripts/init-env.ps1`；Linux：`sh scripts/init-env.sh`。配置文件已存在时脚本拒绝覆盖，保护已有密钥。新配置含独立 `COMPOSE_PROJECT_NAME`；已有部署必须沿用原项目名以连接原来的数据卷，不能在升级时随意改名。多套部署还须避免宿主机端口冲突。随后：
+Windows：`scripts/init-env.ps1`；Linux：`sh scripts/init-env.sh`。脚本生成随机密钥并显式写出 `SEED_DEMO`、`VITE_DEMO`；配置文件已存在时拒绝覆盖，保护已有密钥。新配置含独立 `COMPOSE_PROJECT_NAME`；已有部署必须沿用原项目名以连接原来的数据卷，不能在升级时随意改名。多套部署还须避免宿主机端口冲突。随后：
 
 ```bash
 docker compose --env-file .env.docker config --quiet
@@ -31,26 +31,27 @@ docker compose --env-file .env.docker logs --tail=100 api
 
 ## 3. 数据脚本与初始化
 
-`database/schema.sql`定义所有实体和索引，可在SQLite/PostgreSQL执行。`database/seed.sql`只用于实验默认账号和商品；默认密码公开，不应导入公网数据库。应用首次启动的`seed.ts`使用DEMO_PASSWORD配置；Docker中必须为至少12位且不同于本地默认密码。
+`database/schema.sql` 按账号、商品目录、订单与资金、营销、可靠消息与审计、索引分段定义全部表和索引，两种数据库通用、可重复执行，API 每次启动自动执行。给已有表加列时须同时写入 schema.sql 和 `api/src/core/database.ts` 的 `additions`。`database/seed.sql` 由 `npm run build -w api && node scripts/export-seed.mjs` 从 seed.ts 生成，只用于实验环境手工导入（`sqlite3 库文件 < database/seed.sql` 或 `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f database/seed.sql`，先导入 schema.sql）；其中演示账号密码公开，不应导入公网数据库。Docker 部署无需导入，API 首次启动的 seed.ts 使用 DEMO_PASSWORD，必须至少 12 位且不同于本地默认密码。
 
 已有数据不重复初始化。不通过删除数据来切换密码；管理员可在后台对会员/员工执行启停、密码重置、逻辑删除，并使旧会话失效。正式生产仍需补充首次管理员的安全初始化和密钥管理流程。
 
-## 4. 备份、恢复和回滚
+## 4. 部署、回滚、备份和恢复
 
 ```powershell
-.\scripts\backup.ps1
-.\scripts\restore.ps1 -BackupFile .\backups\freshmarket-YYYYMMDD-HHMMSS.dump
-.\scripts\deploy.ps1
-.\scripts\rollback.ps1
+.\scripts\deploy.ps1                       # 可选 -Version <标签>
+.\scripts\rollback.ps1                     # 可选 -Version <标签>
+.\scripts\backup.ps1                       # 可选 -OutputDirectory <目录>
+.\scripts\restore.ps1 -BackupFile .\backups\freshmarket-YYYYMMDD-HHMMSS.dump -Force
 ```
 
-Linux 使用对应的 `sh scripts/backup.sh`、`sh scripts/restore.sh <备份路径>`、`sh scripts/deploy.sh`、`sh scripts/rollback.sh [版本号]`。
+Linux/macOS 使用 `sh scripts/deploy.sh [版本]`、`sh scripts/rollback.sh [版本]`、`sh scripts/backup.sh [目录]`、`sh scripts/restore.sh <备份路径> --yes`。
 
-备份使用 pg_dump 自定义格式，先在容器内生成，再复制到指定目录，避免 PowerShell 文本管道损坏二进制文件；备份和恢复均尝试清理容器临时转储。恢复脚本先停 API，复制备份并使用单事务 pg_restore，清空专用 Redis 的缓存及秒杀令牌后再启动 API。停止、恢复或清缓存失败不继续启动；启动失败报错而不打印成功。成功后必须检查 `/api/health` 和代表性订单。Redis 的 FLUSHDB 仅适用于本 Compose 专用实例，共享 Redis 需改为命名空间清理。恢复会覆盖当前数据库，应先生成当前备份，在可控演练环境验证。
+- 部署：检查 Docker、`.env.docker` 与 `compose config`，以“提交号-时间”或指定版本构建 api/web 镜像，`up -d --wait` 等待健康检查并经网关请求 `/api/health`。成功后写回 `APP_VERSION` 并追加 `.deploy-history`；失败时自动把 api/web 退回上一次成功的版本，新版本不记录（首次部署失败则保留现场供排查）。构建失败不会改动运行中的服务。
+- 回滚：默认回到 `.deploy-history` 的上一条，确认 API 与 Web 两个镜像都在本机后以 `--no-build --no-deps --wait` 替换应用容器。连续两次回滚会在最近两个版本间切换，回到更早版本须指定版本号。数据库迁移须向后兼容；非兼容变更需要备份恢复，不能只回滚应用镜像。
+- 备份：pg_dump 自定义格式先在容器内生成，`pg_restore --list` 校验可读后复制到宿主机（避免 PowerShell 文本管道损坏二进制），无论成败都删除容器内临时文件。
+- 恢复：会覆盖当前数据库，必须加 `--yes` / `-Force` 确认。脚本先把当前库备份到 `backups/pre-restore`（当前库已无法导出时用 `--no-pre-backup` / `-SkipPreBackup` 跳过），再停 API、单事务 pg_restore、清空专用 Redis 的缓存及秒杀令牌，最后等待 API 恢复健康。停止、恢复、清缓存任一步失败都不启动 API；API 未恢复健康时报错而不打印成功。成功后检查代表性订单。FLUSHDB 仅适用于本 Compose 专用实例，共享 Redis 需改为命名空间清理。
 
-使用 deploy 脚本生成提交号加时间的唯一镜像标签（也可显式传版本），写回 `.env.docker` 并追加 `.deploy-history`，保留旧 API/WEB 镜像。回滚脚本默认选择上一次部署，也可指定版本，检查旧镜像后使用 --no-build 替换应用容器。直接重复构建默认 local 标签会覆盖同一镜像，无法保证有可回滚版本。部署/回滚命令返回后还需检查容器健康和代表性业务。数据库迁移须向后兼容；非兼容变更需要备份恢复，不能只回滚应用镜像。
-
-本轮使用 `scripts/test-restore.ps1` 的 docker 函数替身验证停止、恢复、清缓存、启动失败及成功共五条控制流；没有执行真实数据恢复，不能声明本轮已验证 RPO/RTO。10 月 18 日的独立演练保留为历史记录，升级后仍需在测试数据库执行恢复比对。
+`sh scripts/test-ops.sh`（19 项）与 `scripts/test-ops.ps1`（18 项）在临时目录运行脚本副本，用 docker 替身检查上述成功与失败分支，不触及真实容器与 `.env.docker`；CI 执行 sh 版本。替身测试不能替代真实演练，升级后仍需在测试数据库执行备份、恢复比对与回滚演练。
 
 ## 5. 监控与故障处理
 
@@ -74,4 +75,4 @@ Linux 使用对应的 `sh scripts/backup.sh`、`sh scripts/restore.sh <备份路
 
 建议分支：main保持可部署；feature/业务名实现；fix/问题名修复。提交采用feat/fix/docs/test/chore类型，变更附需求号、测试结果与回滚条件。由团队评审后合并，不能把代理自检当作已完成的人工审批。
 
-GitHub Actions执行npm ci、类型检查、SQLite后端测试、独立schema PostgreSQL测试、生产构建、Chromium E2E和Compose配置检查。工作流文件已提供；本地通过不等于GitHub托管流水线已实际运行，真实推送结果由团队补录。
+GitHub Actions执行npm ci、类型检查、SQLite后端测试、独立schema PostgreSQL测试、生产构建、Chromium E2E、运维脚本控制流测试和Compose配置检查。工作流文件已提供；本地通过不等于GitHub托管流水线已实际运行，真实推送结果由团队补录。

@@ -21,7 +21,7 @@ npm run load         # load test against a running API
 - Run a single API test: `cd api && npx tsx --test --test-name-pattern="<test name regex>" test/system.test.ts`
 - PostgreSQL tests: set `TEST_DATABASE_URL=postgres://...`. Each test creates a temporary schema and drops it afterwards. CI runs `npm test` twice, once on SQLite and once on Postgres, so SQL changes must work on both.
 - E2E results go to `docs/evidence/e2e-results.json` and screenshots to `docs/screenshots/`. Both are committed, so running E2E changes tracked files.
-- Full stack (Postgres, Redis, RabbitMQ, nginx, Prometheus, Alertmanager, Grafana, Jaeger): `sh scripts/init-env.sh && sh scripts/deploy.sh` (unique image tag per deploy; `scripts/rollback.sh` returns to the previous one). Ops scripts exist as both `.sh` and `.ps1` (`backup`, `restore`, `deploy`, `rollback`); `.ps1` files stay ASCII so Windows PowerShell 5.1 reads them.
+- Full stack (Postgres, Redis, RabbitMQ, nginx, Prometheus, Alertmanager, Grafana, Jaeger): `sh scripts/init-env.sh && sh scripts/deploy.sh` (unique image tag per deploy; `scripts/rollback.sh` returns to the previous one). Ops scripts exist as both `.sh` and `.ps1` (`backup`, `restore`, `deploy`, `rollback`); `.ps1` files stay ASCII so Windows PowerShell 5.1 reads them. `sh scripts/test-ops.sh` and `scripts/test-ops.ps1` check their success/failure control flow against a docker double in a temp copy (CI runs the sh one); keep both in sync when changing a script.
 - Swagger: http://localhost:3001/api/docs. Demo accounts: `member`, `operator`, `warehouse`, `support`, `finance`, `admin`. Local password: `Fresh@123456`.
 
 ## Architecture
@@ -58,4 +58,5 @@ npm run load         # load test against a running API
 ## Conventions
 - The code is written in a very dense style: long single-line functions, minimal whitespace, short Chinese comments. Match it when editing instead of reformatting files.
 - Feature commits update the matching paragraph in `README.md`, which describes behavior in detail (search rules, deletion permissions, the account split). Update it when behavior changes.
+- `deliverables/鲜境_{需求文档,设计文档,测试报告}.docx/.pdf` are built from `docs/requirements.md`, `design.md`, `test-report.md` by `scripts/generate-enterprise-docs.py` (black text only; mermaid blocks map to PNGs by content hash in `docs/diagrams/mermaid-manifest.json`, new ones via `node scripts/render-mermaid.mjs`), then `scripts/render-documents.ps1` updates the TOC and exports PDFs through Word.
 - `docs/`, `deliverables/` and the Python scripts in `scripts/` (`generate-deliverables.py`, `package.py`, etc.) produce coursework deliverables. Running the app doesn't need them.

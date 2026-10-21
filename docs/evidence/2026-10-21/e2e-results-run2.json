@@ -1,0 +1,436 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\node_modules\\node\\bin\\node.exe",
+      "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\playwright.config.ts",
+    "rootDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/evidence/e2e-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": true,
+      "timeout": 60000
+    }
+  },
+  "suites": [
+    {
+      "title": "shopping.spec.ts",
+      "file": "shopping.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop catalog, real local images, search and product details",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 988,
+                  "error": {
+                    "message": "Error: page.evaluate: EncodingError: The source image cannot be decoded.",
+                    "stack": "Error: page.evaluate: EncodingError: The source image cannot be decoded.\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:54:14",
+                    "location": {
+                      "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                      "column": 14,
+                      "line": 54
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 52 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.product-card'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m12\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 53 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.product-image img'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mevaluate((img\u001b[33m:\u001b[39m\u001b[33mHTMLImageElement\u001b[39m)\u001b[33m=>\u001b[39mimg\u001b[33m.\u001b[39mdecode())\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 54 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(\u001b[36masync\u001b[39m()\u001b[33m=>\u001b[39m{\u001b[36mawait\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m.\u001b[39mall(\u001b[33mArray\u001b[39m\u001b[33m.\u001b[39m\u001b[36mfrom\u001b[39m(document\u001b[33m.\u001b[39mimages)\u001b[33m.\u001b[39mmap(img\u001b[33m=>\u001b[39m{img\u001b[33m.\u001b[39mloading\u001b[33m=\u001b[39m\u001b[32m'eager'\u001b[39m\u001b[33m;\u001b[39m\u001b[36mreturn\u001b[39m img\u001b[33m.\u001b[39mdecode()\u001b[33m;\u001b[39m}))\u001b[33m;\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 55 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mscreenshot({path\u001b[33m:\u001b[39mscreenshotDir\u001b[33m+\u001b[39m\u001b[32m'/01-home-desktop.png'\u001b[39m\u001b[33m,\u001b[39mfullPage\u001b[33m:\u001b[39m\u001b[36mtrue\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m 56 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'textbox'\u001b[39m\u001b[33m,\u001b[39m{name\u001b[33m:\u001b[39m\u001b[32m'搜索商品'\u001b[39m\u001b[33m,\u001b[39mexact\u001b[33m:\u001b[39m\u001b[36mtrue\u001b[39m})\u001b[33m.\u001b[39mfill(\u001b[32m'三文鱼'\u001b[39m)\u001b[33m;\u001b[39m\u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m{name\u001b[33m:\u001b[39m\u001b[32m'搜索'\u001b[39m\u001b[33m,\u001b[39mexact\u001b[33m:\u001b[39m\u001b[36mtrue\u001b[39m})\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 57 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.product-card'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                        "column": 14,
+                        "line": 54
+                      },
+                      "message": "Error: page.evaluate: EncodingError: The source image cannot be decoded.\n\n  52 |   await expect(page.locator('.product-card')).toHaveCount(12);\n  53 |   await page.locator('.product-image img').first().evaluate((img:HTMLImageElement)=>img.decode());\n> 54 |   await page.evaluate(async()=>{await Promise.all(Array.from(document.images).map(img=>{img.loading='eager';return img.decode();}));});\n     |              ^\n  55 |   await page.screenshot({path:screenshotDir+'/01-home-desktop.png',fullPage:true});\n  56 |   await page.getByRole('textbox',{name:'搜索商品',exact:true}).fill('三文鱼');await page.getByRole('button',{name:'搜索',exact:true}).click();\n  57 |   await expect(page.locator('.product-card')).toHaveCount(1);\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:54:14"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:04.288Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-desktop-catalog-r-e3ca5--search-and-product-details\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-desktop-catalog-r-e3ca5--search-and-product-details\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-desktop-catalog-r-e3ca5--search-and-product-details\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                    "column": 14,
+                    "line": 54
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-92174939eaf101c849b1",
+          "file": "shopping.spec.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "title": "top navigation highlight stays in sync with the icon category bar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 772,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:36.469Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-99a810b093de59a74a97",
+          "file": "shopping.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "mobile shop has usable controls and no horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 650,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:37.626Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-3c6cf8daaa4fc8b0c811",
+          "file": "shopping.spec.ts",
+          "line": 78,
+          "column": 5
+        },
+        {
+          "title": "member checkout, payment, staff fulfillment, receipt, review and settlement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1861,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:38.283Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-6f715e1bb694aa769313",
+          "file": "shopping.spec.ts",
+          "line": 86,
+          "column": 5
+        },
+        {
+          "title": "customer refund and service audit are visible in the workbench",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2592,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:40.150Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-331d9f94bc69352a6230",
+          "file": "shopping.spec.ts",
+          "line": 97,
+          "column": 5
+        },
+        {
+          "title": "warehouse UI shows fulfillment and inventory but hides privileged sections",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 852,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:42.749Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-2e5cfb8cefad25feb721",
+          "file": "shopping.spec.ts",
+          "line": 107,
+          "column": 5
+        },
+        {
+          "title": "header delivery address selector switches regions and syncs the label",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 588,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:43.606Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-c33bfee8ce27f4617051",
+          "file": "shopping.spec.ts",
+          "line": 114,
+          "column": 5
+        },
+        {
+          "title": "delivery time options mark only the selected slot with a check icon",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1201,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:44.199Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-8a1867f90c9a5fcf4cdd",
+          "file": "shopping.spec.ts",
+          "line": 127,
+          "column": 5
+        },
+        {
+          "title": "modal inputs accept typing and partial refund can be submitted",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1721,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:32:45.406Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-8dc256c5bc60b38c06be",
+          "file": "shopping.spec.ts",
+          "line": 140,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T18:32:02.131Z",
+    "duration": 76005.643,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

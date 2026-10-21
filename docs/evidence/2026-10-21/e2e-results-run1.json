@@ -1,0 +1,504 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\node_modules\\node\\bin\\node.exe",
+      "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\playwright.config.ts",
+    "rootDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/Codes/AI辅助软件开发实践/freshmarket-platform/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/evidence/e2e-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": true,
+      "timeout": 60000
+    }
+  },
+  "suites": [
+    {
+      "title": "shopping.spec.ts",
+      "file": "shopping.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop catalog, real local images, search and product details",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15125,
+                  "error": {
+                    "message": "Error: browserContext.newPage: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\xunlin\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-xG88Ew --remote-debugging-pipe --no-startup-window\n<launched> pid=42436",
+                    "stack": "Error: browserContext.newPage: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\xunlin\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-xG88Ew --remote-debugging-pipe --no-startup-window\n<launched> pid=42436"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserContext.newPage: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\xunlin\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-xG88Ew --remote-debugging-pipe --no-startup-window\n<launched> pid=42436"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:13:03.720Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-desktop-catalog-r-e3ca5--search-and-product-details\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-desktop-catalog-r-e3ca5--search-and-product-details\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-92174939eaf101c849b1",
+          "file": "shopping.spec.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "title": "top navigation highlight stays in sync with the icon category bar",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 70114,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                        "column": 62,
+                        "line": 71
+                      },
+                      "message": "Error: locator.click: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.category-section').getByRole('button', { name: '时令水果', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"category \">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\n\n  69 |   await expect(nav.getByRole('link',{name:'首页',exact:true})).not.toHaveClass(/active/);\n  70 |   await expect(iconBar.getByRole('button',{name:'海鲜水产',exact:true})).toHaveClass(/selected/);\n> 71 |   await iconBar.getByRole('button',{name:'时令水果',exact:true}).click();\n     |                                                              ^\n  72 |   await expect(nav.getByRole('link',{name:'时令水果',exact:true})).toHaveClass(/active/);\n  73 |   await expect(iconBar.getByRole('button',{name:'时令水果',exact:true})).toHaveClass(/selected/);\n  74 |   await nav.getByRole('link',{name:'首页',exact:true}).click();\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:71:62"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:13:20.023Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-top-navigation-hi-58c21--with-the-icon-category-bar\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-top-navigation-hi-58c21--with-the-icon-category-bar\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-99a810b093de59a74a97",
+          "file": "shopping.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "mobile shop has usable controls and no horizontal overflow",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11158,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.product-card')\nExpected: \u001b[32m12\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.product-card') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.product-card')\u001b[22m\n\u001b[2m    14 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.product-card')\nExpected: \u001b[32m12\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.product-card') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.product-card')\u001b[22m\n\u001b[2m    14 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:80:47",
+                    "location": {
+                      "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                      "column": 47,
+                      "line": 80
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 78 |\u001b[39m test(\u001b[32m'mobile shop has usable controls and no horizontal overflow'\u001b[39m\u001b[33m,\u001b[39m\u001b[36masync\u001b[39m({page})\u001b[33m=>\u001b[39m{\n \u001b[90m 79 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39msetViewportSize({width\u001b[33m:\u001b[39m\u001b[35m390\u001b[39m\u001b[33m,\u001b[39mheight\u001b[33m:\u001b[39m\u001b[35m844\u001b[39m})\u001b[33m;\u001b[39m\u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 80 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.product-card'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m12\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 81 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(\u001b[36masync\u001b[39m()\u001b[33m=>\u001b[39m{\u001b[36mawait\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m.\u001b[39mall(\u001b[33mArray\u001b[39m\u001b[33m.\u001b[39m\u001b[36mfrom\u001b[39m(document\u001b[33m.\u001b[39mimages)\u001b[33m.\u001b[39mmap(img\u001b[33m=>\u001b[39m{img\u001b[33m.\u001b[39mloading\u001b[33m=\u001b[39m\u001b[32m'eager'\u001b[39m\u001b[33m;\u001b[39m\u001b[36mreturn\u001b[39m img\u001b[33m.\u001b[39mdecode()\u001b[33m;\u001b[39m}))\u001b[33m;\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m 82 |\u001b[39m   expect(\u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(()\u001b[33m=>\u001b[39mdocument\u001b[33m.\u001b[39mdocumentElement\u001b[33m.\u001b[39mscrollWidth\u001b[33m<=\u001b[39mwindow\u001b[33m.\u001b[39minnerWidth))\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 83 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m{name\u001b[33m:\u001b[39m\u001b[32m'加入购物车 丹东红颜草莓'\u001b[39m\u001b[33m,\u001b[39mexact\u001b[33m:\u001b[39m\u001b[36mtrue\u001b[39m}))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                        "column": 47,
+                        "line": 80
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.product-card')\nExpected: \u001b[32m12\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.product-card') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.product-card')\u001b[22m\n\u001b[2m    14 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n  78 | test('mobile shop has usable controls and no horizontal overflow',async({page})=>{\n  79 |   await page.setViewportSize({width:390,height:844});await page.goto('/');\n> 80 |   await expect(page.locator('.product-card')).toHaveCount(12);\n     |                                               ^\n  81 |   await page.evaluate(async()=>{await Promise.all(Array.from(document.images).map(img=>{img.loading='eager';return img.decode();}));});\n  82 |   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);\n  83 |   await expect(page.getByRole('button',{name:'加入购物车 丹东红颜草莓',exact:true})).toBeVisible();\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:80:47"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:14:31.345Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-mobile-shop-has-u-24c22--and-no-horizontal-overflow\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-mobile-shop-has-u-24c22--and-no-horizontal-overflow\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                    "column": 47,
+                    "line": 80
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-3c6cf8daaa4fc8b0c811",
+          "file": "shopping.spec.ts",
+          "line": 78,
+          "column": 5
+        },
+        {
+          "title": "member checkout, payment, staff fulfillment, receipt, review and settlement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2187,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:14:43.444Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-6f715e1bb694aa769313",
+          "file": "shopping.spec.ts",
+          "line": 86,
+          "column": 5
+        },
+        {
+          "title": "customer refund and service audit are visible in the workbench",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 70769,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts",
+                        "column": 96,
+                        "line": 105
+                      },
+                      "message": "Error: page.goto: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5173/admin\", waiting until \"load\"\u001b[22m\n\n\n  103 |   const row=page.locator('tr').filter({hasText:'尚未发货，需要取消本次采购'}).first();await row.getByRole('button',{name:'同意退款',exact:true}).click();await page.getByRole('button',{name:'确认退款',exact:true}).click();await expect(page.getByRole('dialog')).toBeHidden();\n  104 |   await expect(row.getByText('已通过',{exact:true})).toBeVisible();await page.screenshot({path:screenshotDir+'/04-refund-workbench.png',fullPage:true});\n> 105 |   await page.getByRole('button',{name:'退出登录',exact:true}).click();await login(page);await page.goto('/admin');await expect(page.getByRole('heading',{name:'经营概览'})).toBeVisible();await page.screenshot({path:screenshotDir+'/05-admin-dashboard.png',fullPage:true});await page.goto('/admin/audit');await expect(page.getByRole('heading',{name:'审计日志'})).toBeVisible();await expect(page.locator('table')).toContainText('refund.decision');await page.screenshot({path:screenshotDir+'/06-audit-log.png',fullPage:true});\n      |                                                                                                ^\n  106 | });\n  107 | test('warehouse UI shows fulfillment and inventory but hides privileged sections',async({page})=>{\n  108 |   await page.goto('/');await login(page,'warehouse');await page.goto('/admin/stock');await expect(page.getByRole('heading',{name:'库存管理',exact:true})).toBeVisible();\n    at D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\e2e\\shopping.spec.ts:105:96"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:14:46.033Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\Codes\\AI辅助软件开发实践\\freshmarket-platform\\test-results\\shopping-customer-refund-a-5b362-re-visible-in-the-workbench\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-331d9f94bc69352a6230",
+          "file": "shopping.spec.ts",
+          "line": 97,
+          "column": 5
+        },
+        {
+          "title": "warehouse UI shows fulfillment and inventory but hides privileged sections",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 998,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:15:57.682Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-2e5cfb8cefad25feb721",
+          "file": "shopping.spec.ts",
+          "line": 107,
+          "column": 5
+        },
+        {
+          "title": "header delivery address selector switches regions and syncs the label",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 650,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:15:59.187Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-c33bfee8ce27f4617051",
+          "file": "shopping.spec.ts",
+          "line": 114,
+          "column": 5
+        },
+        {
+          "title": "delivery time options mark only the selected slot with a check icon",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1446,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:15:59.844Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-8a1867f90c9a5fcf4cdd",
+          "file": "shopping.spec.ts",
+          "line": 127,
+          "column": 5
+        },
+        {
+          "title": "modal inputs accept typing and partial refund can be submitted",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1980,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T18:16:01.296Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f177f4eaa9abb9f5894f-8dc256c5bc60b38c06be",
+          "file": "shopping.spec.ts",
+          "line": 140,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T18:13:01.547Z",
+    "duration": 183265.086,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

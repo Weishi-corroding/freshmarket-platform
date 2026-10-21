@@ -1,0 +1,21 @@
+PASS deploy records a healthy version
+PASS deploy stops before touching services when the build fails
+PASS deploy restores the previous version when health checks fail
+PASS deploy treats a failed gateway health probe as unhealthy
+PASS first deploy failure leaves services for investigation
+PASS deploy rejects an invalid version
+PASS rollback defaults to the previous recorded version
+PASS rollback refuses when an image is missing
+PASS rollback without history requires an explicit version
+PASS backup verifies the dump and removes the container copy
+PASS backup fails on an unreadable dump and still cleans up
+PASS restore requires --yes
+PASS restore backs up first and restarts the API
+PASS restore changes nothing when the pre-restore backup fails
+PASS restore --no-pre-backup skips the safety backup
+PASS restore keeps the API stopped after failure: stop api
+PASS restore keeps the API stopped after failure: pg_restore -U
+PASS restore keeps the API stopped after failure: FLUSHDB
+PASS restore reports an unhealthy API as a failure
+19 checks passed
+exit 0

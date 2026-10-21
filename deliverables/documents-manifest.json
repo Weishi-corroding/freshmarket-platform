@@ -1,18 +1,18 @@
 {
   "wordDocuments": [
-    "鲜境_需求文档.docx",
+    "鲜境_测试报告.docx",
     "鲜境_设计文档.docx",
-    "鲜境_测试报告.docx"
+    "鲜境_需求文档.docx"
   ],
-  "date": "2026-10-20",
-  "baseSnapshot": "2026-10-18 / bb1bde2",
-  "updateBaseline": "725696a plus 2026-10-20 maintenance changes",
-  "method": "Append maintenance addenda only; preserve existing content and formatting",
+  "date": "2026-10-21",
+  "version": "3.0",
+  "source": "docs/requirements.md, docs/design.md, docs/test-report.md via scripts/generate-enterprise-docs.py",
+  "method": "Full rewrite and regeneration; black text only (宋体/黑体/Times New Roman), colour limited to images and diagrams",
   "pdfPages": {
-    "鲜境_需求文档.pdf": 48,
-    "鲜境_设计文档.pdf": 61,
-    "鲜境_测试报告.pdf": 36
+    "鲜境_需求文档.pdf": 41,
+    "鲜境_设计文档.pdf": 45,
+    "鲜境_测试报告.pdf": 13
   },
-  "validation": "docs/evidence/2026-10-20/documents-update.json",
-  "nativeWordRenderValidated": false
+  "rendering": "Microsoft Word 16.0 via scripts/render-documents.ps1 (TOC and page fields updated)",
+  "nativeWordRenderValidated": true
 }
